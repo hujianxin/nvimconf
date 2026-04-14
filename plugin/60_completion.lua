@@ -91,6 +91,13 @@ on_event("InsertEnter", function()
     signature = { enabled = true },
     sources = {
       default = { "lsp", "path", "snippets", "buffer" },
+      providers = {
+        snippets = {
+          opts = {
+            search_paths = { vim.fn.stdpath("config") .. "/snippets" },
+          },
+        },
+      },
     },
     -- Use Rust if available, otherwise Lua
     fuzzy = {
