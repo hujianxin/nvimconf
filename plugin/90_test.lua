@@ -6,7 +6,7 @@
 -- Adapters are loaded on-demand when their respective filetypes are opened.
 
 local add = vim.pack.add
-local later, on_filetype = Config.later, Config.on_filetype
+local on_filetype = Config.on_filetype
 
 -- Store adapters to be registered
 local pending_adapters = {}
@@ -38,10 +38,15 @@ local function register_adapter(name, factory)
 end
 
 -- ============================================================================
--- Neotest - Test framework (load on file open)
+-- Neotest - Test framework (lazy-loaded on command)
 -- ============================================================================
 
-later(function()
+local neotest_loaded = false
+local function ensure_neotest()
+  if neotest_loaded then
+    return
+  end
+  neotest_loaded = true
   add({
     "https://github.com/nvim-neotest/neotest",
     "https://github.com/nvim-lua/plenary.nvim",
@@ -73,42 +78,46 @@ later(function()
     icons = { passed = "", failed = "", running = "", skipped = "", unknown = "?" },
   })
 
-  -- Keymaps
-  vim.keymap.set("n", "<leader>Tt", function()
-    require("neotest").run.run()
-  end, { desc = "Run nearest test" })
-  vim.keymap.set("n", "<leader>Tf", function()
-    require("neotest").run.run(vim.fn.expand("%"))
-  end, { desc = "Run all tests in file" })
-  vim.keymap.set("n", "<leader>Ts", function()
-    require("neotest").run.stop()
-  end, { desc = "Stop test" })
-  vim.keymap.set("n", "<leader>Ta", function()
-    require("neotest").run.attach()
-  end, { desc = "Attach to running test" })
-  vim.keymap.set("n", "<leader>TO", function()
-    require("neotest").output.open({ enter = true })
-  end, { desc = "Show test output" })
-  vim.keymap.set("n", "<leader>To", function()
-    require("neotest").output_panel.toggle()
-  end, { desc = "Toggle test output panel" })
-  vim.keymap.set("n", "<leader>TS", function()
-    require("neotest").summary.toggle()
-  end, { desc = "Toggle test summary" })
-
   -- Close keymaps for neotest-output
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = "neotest-output",
-    callback = function(args)
-      vim.keymap.set("n", "q", function()
-        vim.api.nvim_win_close(0, true)
-      end, { buffer = args.buf, silent = true })
-      vim.keymap.set("n", "<Esc>", function()
-        vim.api.nvim_win_close(0, true)
-      end, { buffer = args.buf, silent = true })
-    end,
-  })
-end)
+  Config.new_autocmd("FileType", "neotest-output", function(args)
+    vim.keymap.set("n", "q", function()
+      vim.api.nvim_win_close(0, true)
+    end, { buffer = args.buf, silent = true })
+    vim.keymap.set("n", "<Esc>", function()
+      vim.api.nvim_win_close(0, true)
+    end, { buffer = args.buf, silent = true })
+  end, "Close keymaps for neotest-output")
+end
+
+-- Keymaps (trigger lazy loading)
+vim.keymap.set("n", "<leader>Tt", function()
+  ensure_neotest()
+  require("neotest").run.run()
+end, { desc = "Run nearest test" })
+vim.keymap.set("n", "<leader>Tf", function()
+  ensure_neotest()
+  require("neotest").run.run(vim.fn.expand("%"))
+end, { desc = "Run all tests in file" })
+vim.keymap.set("n", "<leader>Ts", function()
+  ensure_neotest()
+  require("neotest").run.stop()
+end, { desc = "Stop test" })
+vim.keymap.set("n", "<leader>Ta", function()
+  ensure_neotest()
+  require("neotest").run.attach()
+end, { desc = "Attach to running test" })
+vim.keymap.set("n", "<leader>TO", function()
+  ensure_neotest()
+  require("neotest").output.open({ enter = true })
+end, { desc = "Show test output" })
+vim.keymap.set("n", "<leader>To", function()
+  ensure_neotest()
+  require("neotest").output_panel.toggle()
+end, { desc = "Toggle test output panel" })
+vim.keymap.set("n", "<leader>TS", function()
+  ensure_neotest()
+  require("neotest").summary.toggle()
+end, { desc = "Toggle test summary" })
 
 -- ============================================================================
 -- Neotest adapters - Register on filetype (loaded when neotest initializes)

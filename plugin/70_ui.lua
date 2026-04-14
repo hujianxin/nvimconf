@@ -57,10 +57,15 @@ later(function()
 end)
 
 -- ============================================================================
--- Trouble.nvim - Diagnostics and quickfix
+-- Trouble.nvim - Diagnostics and quickfix (lazy-loaded on command)
 -- ============================================================================
 
-later(function()
+local trouble_loaded = false
+local function ensure_trouble()
+  if trouble_loaded then
+    return
+  end
+  trouble_loaded = true
   add({
     "https://github.com/folke/trouble.nvim",
     "https://github.com/nvim-mini/mini.icons",
@@ -74,44 +79,66 @@ later(function()
       kinds = {},
     },
   })
+end
 
-  vim.keymap.set("n", "<leader>XX", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics" })
-  vim.keymap.set("n", "<leader>Xx", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Buffer Diagnostics" })
-  vim.keymap.set("n", "<leader>Xs", "<cmd>Trouble symbols toggle focus=false<cr>", { desc = "Symbols" })
-  vim.keymap.set(
-    "n",
-    "<leader>Xl",
-    "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
-    { desc = "LSP Definitions/References" }
-  )
-  vim.keymap.set("n", "<leader>XL", "<cmd>Trouble loclist toggle<cr>", { desc = "Location List" })
-  vim.keymap.set("n", "<leader>XQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List" })
-end)
+vim.keymap.set("n", "<leader>XX", function()
+  ensure_trouble()
+  vim.cmd("Trouble diagnostics toggle")
+end, { desc = "Diagnostics" })
+vim.keymap.set("n", "<leader>Xx", function()
+  ensure_trouble()
+  vim.cmd("Trouble diagnostics toggle filter.buf=0")
+end, { desc = "Buffer Diagnostics" })
+vim.keymap.set("n", "<leader>Xs", function()
+  ensure_trouble()
+  vim.cmd("Trouble symbols toggle focus=false")
+end, { desc = "Symbols" })
+vim.keymap.set("n", "<leader>Xl", function()
+  ensure_trouble()
+  vim.cmd("Trouble lsp toggle focus=false win.position=right")
+end, { desc = "LSP Definitions/References" })
+vim.keymap.set("n", "<leader>XL", function()
+  ensure_trouble()
+  vim.cmd("Trouble loclist toggle")
+end, { desc = "Location List" })
+vim.keymap.set("n", "<leader>XQ", function()
+  ensure_trouble()
+  vim.cmd("Trouble qflist toggle")
+end, { desc = "Quickfix List" })
 
 -- ============================================================================
--- Grug-far - Search and replace
+-- Grug-far - Search and replace (lazy-loaded on command)
 -- ============================================================================
 
-later(function()
+local grugfar_loaded = false
+local function ensure_grugfar()
+  if grugfar_loaded then
+    return
+  end
+  grugfar_loaded = true
   add({ "https://github.com/MagicDuck/grug-far.nvim" })
 
   require("grug-far").setup({
     windowCreationCommand = "vsplit",
   })
+end
 
-  vim.keymap.set("n", "<M-S-s>", function()
-    require("grug-far").open()
-  end, { desc = "Replace in files (grug-far)" })
-  vim.keymap.set("n", "<M-S-w>", function()
-    require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
-  end, { desc = "Replace current word" })
-  vim.keymap.set("v", "<M-S-w>", function()
-    require("grug-far").with_visual_selection()
-  end, { desc = "Replace selection" })
-  vim.keymap.set("n", "<M-S-f>", function()
-    require("grug-far").open({ prefills = { paths = vim.fn.expand("%") } })
-  end, { desc = "Replace in current file" })
-end)
+vim.keymap.set("n", "<M-S-s>", function()
+  ensure_grugfar()
+  require("grug-far").open()
+end, { desc = "Replace in files (grug-far)" })
+vim.keymap.set("n", "<M-S-w>", function()
+  ensure_grugfar()
+  require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
+end, { desc = "Replace current word" })
+vim.keymap.set("v", "<M-S-w>", function()
+  ensure_grugfar()
+  require("grug-far").with_visual_selection()
+end, { desc = "Replace selection" })
+vim.keymap.set("n", "<M-S-f>", function()
+  ensure_grugfar()
+  require("grug-far").open({ prefills = { paths = vim.fn.expand("%") } })
+end, { desc = "Replace in current file" })
 
 -- ============================================================================
 -- Quicker.nvim - Enhanced quickfix

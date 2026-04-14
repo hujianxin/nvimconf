@@ -3,9 +3,17 @@
 -- ============================================================================
 
 local add = vim.pack.add
-local later = Config.later
 
-later(function()
+-- ============================================================================
+-- Conform - Code formatting (lazy-loaded on command)
+-- ============================================================================
+
+local conform_loaded = false
+local function ensure_conform()
+  if conform_loaded then
+    return
+  end
+  conform_loaded = true
   add({ "https://github.com/stevearc/conform.nvim" })
 
   require("conform").setup({
@@ -30,12 +38,14 @@ later(function()
       cmake = { "gersemi" },
     },
   })
+end
 
-  vim.keymap.set("n", "=", function()
-    require("conform").format({ async = true, lsp_fallback = true })
-  end, { desc = "Format code" })
+vim.keymap.set("n", "=", function()
+  ensure_conform()
+  require("conform").format({ async = true, lsp_fallback = true })
+end, { desc = "Format code" })
 
-  vim.api.nvim_create_user_command("Format", function()
-    require("conform").format({ async = true, lsp_fallback = true })
-  end, {})
-end)
+vim.api.nvim_create_user_command("Format", function()
+  ensure_conform()
+  require("conform").format({ async = true, lsp_fallback = true })
+end, {})

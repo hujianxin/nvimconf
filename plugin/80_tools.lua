@@ -6,10 +6,15 @@ local add = vim.pack.add
 local later, on_event, on_filetype = Config.later, Config.on_event, Config.on_filetype
 
 -- ============================================================================
--- Overseer - Task runner
+-- Overseer - Task runner (lazy-loaded on command)
 -- ============================================================================
 
-later(function()
+local overseer_loaded = false
+local function ensure_overseer()
+  if overseer_loaded then
+    return
+  end
+  overseer_loaded = true
   add({ "https://github.com/stevearc/overseer.nvim" })
 
   require("overseer").setup({
@@ -30,55 +35,70 @@ later(function()
 
   -- Commands
   vim.cmd.cnoreabbrev("OS OverseerShell")
+end
 
-  -- Keymaps
-  vim.keymap.set("n", "<leader>Ot", "<cmd>OverseerToggle!<CR>", { desc = "Toggle" })
-  vim.keymap.set("n", "<leader>Or", "<cmd>OverseerRun<CR>", { desc = "Run" })
-  vim.keymap.set("n", "<leader>Os", "<cmd>OverseerShell<CR>", { desc = "Shell" })
-  vim.keymap.set("n", "<leader>OT", "<cmd>OverseerTaskAction<CR>", { desc = "Task action" })
-  vim.keymap.set("n", "<leader>Od", function()
-    local overseer = require("overseer")
-    local tasks =
-      overseer.list_tasks({ sort = require("overseer.task_list").sort_finished_recently, include_ephemeral = true })
-    if vim.tbl_isempty(tasks) then
-      vim.notify("No tasks found", vim.log.levels.WARN)
-    else
-      overseer.run_action(tasks[1])
-    end
-  end, { desc = "Do quick action" })
+-- Keymaps (trigger lazy loading)
+vim.keymap.set("n", "<leader>Ot", function()
+  ensure_overseer()
+  vim.cmd("OverseerToggle!")
+end, { desc = "Toggle" })
+vim.keymap.set("n", "<leader>Or", function()
+  ensure_overseer()
+  vim.cmd("OverseerRun")
+end, { desc = "Run" })
+vim.keymap.set("n", "<leader>Os", function()
+  ensure_overseer()
+  vim.cmd("OverseerShell")
+end, { desc = "Shell" })
+vim.keymap.set("n", "<leader>OT", function()
+  ensure_overseer()
+  vim.cmd("OverseerTaskAction")
+end, { desc = "Task action" })
+vim.keymap.set("n", "<leader>Od", function()
+  ensure_overseer()
+  local overseer = require("overseer")
+  local tasks =
+    overseer.list_tasks({ sort = require("overseer.task_list").sort_finished_recently, include_ephemeral = true })
+  if vim.tbl_isempty(tasks) then
+    vim.notify("No tasks found", vim.log.levels.WARN)
+  else
+    overseer.run_action(tasks[1])
+  end
+end, { desc = "Do quick action" })
 
-  -- User commands
-  vim.api.nvim_create_user_command("OverseerTestOutput", function()
-    vim.cmd.tabnew()
-    vim.bo.bufhidden = "wipe"
-    require("overseer").create_task_output_view(0, {
-      select = function(self, tasks)
-        for _, task in ipairs(tasks) do
-          if task.metadata.neotest_group_id then
-            return task
-          end
+-- Lazy-loaded user commands
+vim.api.nvim_create_user_command("OverseerTestOutput", function()
+  ensure_overseer()
+  vim.cmd.tabnew()
+  vim.bo.bufhidden = "wipe"
+  require("overseer").create_task_output_view(0, {
+    select = function(self, tasks)
+      for _, task in ipairs(tasks) do
+        if task.metadata.neotest_group_id then
+          return task
         end
-        self:dispose()
-      end,
-    })
-  end, { desc = "Open a new tab that displays the output of the most recent test" })
+      end
+      self:dispose()
+    end,
+  })
+end, { desc = "Open a new tab that displays the output of the most recent test" })
 
-  vim.api.nvim_create_user_command("Make", function(params)
-    local cmd, num_subs = vim.o.makeprg:gsub("%$%*", params.args)
-    if num_subs == 0 then
-      cmd = cmd .. " " .. params.args
-    end
-    local task = require("overseer").new_task({
-      cmd = vim.fn.expandcmd(cmd),
-      components = {
-        { "on_output_quickfix", open = not params.bang, open_height = 8 },
-        "unique",
-        "default",
-      },
-    })
-    task:start()
-  end, { desc = "Run your makeprg as an Overseer task", nargs = "*", bang = true })
-end)
+vim.api.nvim_create_user_command("Make", function(params)
+  ensure_overseer()
+  local cmd, num_subs = vim.o.makeprg:gsub("%$%*", params.args)
+  if num_subs == 0 then
+    cmd = cmd .. " " .. params.args
+  end
+  local task = require("overseer").new_task({
+    cmd = vim.fn.expandcmd(cmd),
+    components = {
+      { "on_output_quickfix", open = not params.bang, open_height = 8 },
+      "unique",
+      "default",
+    },
+  })
+  task:start()
+end, { desc = "Run your makeprg as an Overseer task", nargs = "*", bang = true })
 
 -- ============================================================================
 -- Multicursor
@@ -210,22 +230,36 @@ on_event({ "InsertLeave", "TextChanged" }, function()
 end)
 
 -- ============================================================================
--- LazyGit
+-- LazyGit (lazy-loaded on command)
 -- ============================================================================
 
-later(function()
+local lazygit_loaded = false
+local function ensure_lazygit()
+  if lazygit_loaded then
+    return
+  end
+  lazygit_loaded = true
   add({
     "https://github.com/kdheepak/lazygit.nvim",
     "https://github.com/nvim-lua/plenary.nvim",
   })
-  vim.keymap.set("n", "<c-g>", "<cmd>LazyGit<cr>", { desc = "LazyGit" })
-end)
+end
+
+vim.keymap.set("n", "<c-g>", function()
+  ensure_lazygit()
+  vim.cmd("LazyGit")
+end, { desc = "LazyGit" })
 
 -- ============================================================================
--- Compile Mode
+-- Compile Mode (lazy-loaded on command)
 -- ============================================================================
 
-later(function()
+local compile_mode_loaded = false
+local function ensure_compile_mode()
+  if compile_mode_loaded then
+    return
+  end
+  compile_mode_loaded = true
   add({
     "https://github.com/ej-shafran/compile-mode.nvim",
     "https://github.com/nvim-lua/plenary.nvim",
@@ -236,10 +270,16 @@ later(function()
     baleia_setup = true,
     bang_expansion = true,
   }
+end
 
-  vim.keymap.set("n", "<leader>Cc", "<cmd>Compile<CR>", { desc = "Compile" })
-  vim.keymap.set("n", "<leader>Cr", "<cmd>Recompile<CR>", { desc = "Recompile" })
-end)
+vim.keymap.set("n", "<leader>Cc", function()
+  ensure_compile_mode()
+  vim.cmd("Compile")
+end, { desc = "Compile" })
+vim.keymap.set("n", "<leader>Cr", function()
+  ensure_compile_mode()
+  vim.cmd("Recompile")
+end, { desc = "Recompile" })
 
 -- ============================================================================
 -- Kulala (HTTP client)
@@ -253,3 +293,64 @@ on_filetype({ "http", "rest" }, function()
     kulala_keymaps_prefix = "",
   })
 end)
+
+-- ============================================================================
+-- CodeDiff - VSCode-style diff viewer (lazy-loaded on command)
+-- ============================================================================
+
+local function setup_codediff()
+  add({ "https://github.com/esmuellert/codediff.nvim" })
+
+  require("codediff").setup({
+    -- Diff view behavior
+    diff = {
+      layout = "side-by-side",
+      disable_inlay_hints = true,
+      max_computation_time_ms = 5000,
+      ignore_trim_whitespace = false,
+      jump_to_first_change = true,
+      highlight_priority = 100,
+      compute_moves = false,
+    },
+    -- Explorer panel configuration
+    explorer = {
+      position = "left",
+      width = 40,
+      indent_markers = true,
+      initial_focus = "explorer",
+      view_mode = "list",
+      flatten_dirs = true,
+      file_filter = {
+        ignore = { ".git/**", ".jj/**", "node_modules/**", "target/**", "dist/**" },
+      },
+      focus_on_select = false,
+      visible_groups = {
+        staged = true,
+        unstaged = true,
+        conflicts = true,
+      },
+    },
+  })
+end
+
+-- Lazy-loaded commands
+vim.api.nvim_create_user_command("CodeDiff", function(params)
+  setup_codediff()
+  -- Re-run the command after setup
+  vim.cmd("CodeDiff " .. params.args)
+end, { nargs = "*", complete = "file", desc = "CodeDiff explorer" })
+
+vim.api.nvim_create_user_command("CodeDiffHead", function()
+  setup_codediff()
+  vim.cmd("CodeDiff HEAD")
+end, { desc = "CodeDiff with HEAD" })
+
+vim.api.nvim_create_user_command("CodeDiffHistory", function()
+  setup_codediff()
+  vim.cmd("CodeDiff history")
+end, { desc = "CodeDiff history" })
+
+-- Keymaps (trigger lazy loading)
+vim.keymap.set("n", "<leader>Df", ":CodeDiff<CR>", { desc = "CodeDiff files" })
+vim.keymap.set("n", "<leader>Dh", ":CodeDiffHistory<CR>", { desc = "CodeDiff history" })
+vim.keymap.set("n", "<leader>DH", ":CodeDiffHead<CR>", { desc = "CodeDiff with HEAD" })

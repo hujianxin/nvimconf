@@ -98,25 +98,23 @@ now(function()
   vim.keymap.set("n", "<leader>Sr", "<cmd>lua MiniSessions.read()<cr>", { desc = "Read last session" })
 
   -- Auto-save session before exiting Neovim
-  vim.api.nvim_create_autocmd("VimLeavePre", {
-    callback = function()
-      -- Only save if there are valid buffers (not just empty/nofile buffers)
-      local has_valid_buffer = false
-      for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_loaded(bufnr) then
-          local bufname = vim.api.nvim_buf_get_name(bufnr)
-          local buftype = vim.bo[bufnr].buftype
-          if bufname ~= "" and buftype ~= "nofile" and buftype ~= "quickfix" and buftype ~= "help" then
-            has_valid_buffer = true
-            break
-          end
+  Config.new_autocmd("VimLeavePre", "*", function()
+    -- Only save if there are valid buffers (not just empty/nofile buffers)
+    local has_valid_buffer = false
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(bufnr) then
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        local buftype = vim.bo[bufnr].buftype
+        if bufname ~= "" and buftype ~= "nofile" and buftype ~= "quickfix" and buftype ~= "help" then
+          has_valid_buffer = true
+          break
         end
       end
-      if has_valid_buffer then
-        MiniSessions.write("auto", { force = true })
-      end
-    end,
-  })
+    end
+    if has_valid_buffer then
+      MiniSessions.write("auto", { force = true })
+    end
+  end, "Auto-save session before exit")
 end)
 
 -- mini.statusline - Statusline
@@ -182,52 +180,49 @@ now_if_args(function()
   vim.keymap.set("n", "<C-y>", function()
     mini_files.open(vim.api.nvim_buf_get_name(0))
   end, { desc = "Open mini.files" })
-  vim.api.nvim_create_autocmd("User", {
-    pattern = "MiniFilesBufferCreate",
-    callback = function(args)
-      local buf_id = args.data.buf_id
-      vim.keymap.set("n", "<C-y>", function()
-        mini_files.close()
-      end, { buffer = buf_id, desc = "Close mini.files" })
-      vim.keymap.set("n", "<Esc>", function()
-        mini_files.close()
-      end, { buffer = buf_id, desc = "Close mini.files" })
-      -- Split keymaps
-      local map_split = function(buf, lhs, direction, desc)
-        local rhs = function()
-          local new_target_window
-          vim.api.nvim_win_call(vim.api.nvim_get_current_win(), function()
-            if direction == "vertical" then
-              vim.cmd("vsplit")
-            elseif direction == "horizontal" then
-              vim.cmd("split")
-            end
-            new_target_window = vim.api.nvim_get_current_win()
-          end)
-          mini_files.set_target_window(new_target_window)
-          mini_files.go_in({ close_on_file = true })
-        end
-        vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
-      end
-      map_split(buf_id, "<C-x>", "horizontal", "Split open")
-      map_split(buf_id, "<C-v>", "vertical", "Vertical split open")
-      -- Tab keymap
-      vim.keymap.set("n", "<C-t>", function()
+  Config.new_autocmd("User", "MiniFilesBufferCreate", function(args)
+    local buf_id = args.data.buf_id
+    vim.keymap.set("n", "<C-y>", function()
+      mini_files.close()
+    end, { buffer = buf_id, desc = "Close mini.files" })
+    vim.keymap.set("n", "<Esc>", function()
+      mini_files.close()
+    end, { buffer = buf_id, desc = "Close mini.files" })
+    -- Split keymaps
+    local map_split = function(buf, lhs, direction, desc)
+      local rhs = function()
         local new_target_window
         vim.api.nvim_win_call(vim.api.nvim_get_current_win(), function()
-          vim.cmd("tabnew")
+          if direction == "vertical" then
+            vim.cmd("vsplit")
+          elseif direction == "horizontal" then
+            vim.cmd("split")
+          end
           new_target_window = vim.api.nvim_get_current_win()
         end)
         mini_files.set_target_window(new_target_window)
         mini_files.go_in({ close_on_file = true })
-      end, { buffer = buf_id, desc = "Open in new tab" })
-      vim.keymap.set("n", "<CR>", function()
-        mini_files.go_in({ close_on_file = true })
-      end, { buffer = buf_id, desc = "Open file or enter directory" })
-      vim.keymap.set("n", "g.", mini_files.synchronize, { buffer = buf_id, desc = "Synchronize" })
-      vim.keymap.set("n", "g?", mini_files.show_help, { buffer = buf_id, desc = "Show help" })
-    end,
-  })
+      end
+      vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
+    end
+    map_split(buf_id, "<C-x>", "horizontal", "Split open")
+    map_split(buf_id, "<C-v>", "vertical", "Vertical split open")
+    -- Tab keymap
+    vim.keymap.set("n", "<C-t>", function()
+      local new_target_window
+      vim.api.nvim_win_call(vim.api.nvim_get_current_win(), function()
+        vim.cmd("tabnew")
+        new_target_window = vim.api.nvim_get_current_win()
+      end)
+      mini_files.set_target_window(new_target_window)
+      mini_files.go_in({ close_on_file = true })
+    end, { buffer = buf_id, desc = "Open in new tab" })
+    vim.keymap.set("n", "<CR>", function()
+      mini_files.go_in({ close_on_file = true })
+    end, { buffer = buf_id, desc = "Open file or enter directory" })
+    vim.keymap.set("n", "g.", mini_files.synchronize, { buffer = buf_id, desc = "Synchronize" })
+    vim.keymap.set("n", "g?", mini_files.show_help, { buffer = buf_id, desc = "Show help" })
+  end, "Mini.files buffer keymaps")
 end)
 
 -- mini.misc - Miscellaneous useful functions
@@ -468,6 +463,7 @@ later(function()
       miniclue.gen_clues.windows(),
       miniclue.gen_clues.z(),
       { mode = "n", keys = "<Leader>G", desc = "Git" },
+      { mode = "n", keys = "<Leader>D", desc = "CodeDiff" },
       { mode = "n", keys = "<Leader>T", desc = "Test" },
       { mode = "n", keys = "<Leader>X", desc = "Trouble" },
       { mode = "n", keys = "<Leader>O", desc = "Overseer" },
@@ -671,12 +667,9 @@ later(function()
     },
   })
   -- Disable single quotes in Rust files
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = "rust",
-    callback = function()
-      vim.keymap.set("i", "'", "'", { buffer = true })
-    end,
-  })
+  Config.new_autocmd("FileType", "rust", function()
+    vim.keymap.set("i", "'", "'", { buffer = true })
+  end, "Disable single quotes in Rust")
 end)
 
 -- mini.pick - General purpose interactive picker

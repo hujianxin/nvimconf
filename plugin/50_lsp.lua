@@ -34,31 +34,28 @@ now_if_args(function()
   vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostic loclist", silent = true })
 
   -- LSP buffer local mappings
-  vim.api.nvim_create_autocmd("LspAttach", {
-    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-    callback = function(args)
-      local opts = { buffer = args.buf }
+  Config.new_autocmd("LspAttach", "*", function(args)
+    local opts = { buffer = args.buf }
 
-      for _, key in ipairs(default_keymaps) do
-        pcall(vim.keymap.del, "n", key, { buffer = args.buf })
-      end
+    for _, key in ipairs(default_keymaps) do
+      pcall(vim.keymap.del, "n", key, { buffer = args.buf })
+    end
 
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Show hover", silent = true }))
-      vim.keymap.set(
-        "n",
-        "<leader>r",
-        vim.lsp.buf.rename,
-        vim.tbl_extend("force", opts, { desc = "Rename", silent = true })
-      )
-      vim.keymap.set(
-        "n",
-        "<leader>k",
-        vim.diagnostic.open_float,
-        vim.tbl_extend("force", opts, { desc = "Show diagnostics", silent = true })
-      )
-      vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { silent = true, desc = "Code actions" })
-    end,
-  })
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Show hover", silent = true }))
+    vim.keymap.set(
+      "n",
+      "<leader>r",
+      vim.lsp.buf.rename,
+      vim.tbl_extend("force", opts, { desc = "Rename", silent = true })
+    )
+    vim.keymap.set(
+      "n",
+      "<leader>k",
+      vim.diagnostic.open_float,
+      vim.tbl_extend("force", opts, { desc = "Show diagnostics", silent = true })
+    )
+    vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { silent = true, desc = "Code actions" })
+  end, "LSP buffer local mappings")
 end)
 
 -- ============================================================================
