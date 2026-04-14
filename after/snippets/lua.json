@@ -1,0 +1,22 @@
+{
+  "local": {
+    "prefix": "l",
+    "body": "local $1 = $0"
+  },
+  "function": {
+    "prefix": "f",
+    "body": ["function $1($2)", "  $0", "end"]
+  },
+  "local function": {
+    "prefix": "lf",
+    "body": ["local function $1($2)", "  $0", "end"]
+  },
+  "require": {
+    "prefix": "req",
+    "body": "local $1 = require('$1')$0"
+  },
+  "pcall require": {
+    "prefix": "preq",
+    "body": "local ok, $1 = pcall(require, '$1')$0"
+  }
+}

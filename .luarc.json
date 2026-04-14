@@ -1,0 +1,29 @@
+{
+  "runtime.version": "LuaJIT",
+  "runtime.path": [
+    "lua/?.lua",
+    "lua/?/init.lua"
+  ],
+  "diagnostics.globals": [
+    "vim",
+    "MiniNotify",
+    "MiniSessions",
+    "MiniVisits",
+    "MiniMisc",
+    "MiniStatusline"
+  ],
+  "diagnostics.disable": [
+    "unused-local",
+    "missing-fields",
+    "inject-field"
+  ],
+  "workspace.library": [
+    "${3rd}/luv/library",
+    "${3rd}/busted/library",
+    "${VIMRUNTIME}/lua",
+    "${VIMRUNTIME}/lua/vim"
+  ],
+  "workspace.checkThirdParty": false,
+  "completion.enable": true,
+  "hint.enable": true
+}
