@@ -76,7 +76,7 @@ vim.opt.shiftround = true
 -- Search settings
 vim.opt.incsearch = true
 vim.opt.hlsearch = true
-vim.opt.ignorecase = false
+vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- Clipboard and undo

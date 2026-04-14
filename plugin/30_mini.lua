@@ -681,33 +681,12 @@ end)
 
 -- mini.pick - General purpose interactive picker
 later(function()
-  local function case_insensitive_match(str_items, query)
-    if query == "" or query == nil then
-      return vim.tbl_map(function(item)
-        return { index = item.index, text = item.text }
-      end, str_items)
-    end
-
-    local query_lower = query:lower()
-    local matched = {}
-
-    for _, item in ipairs(str_items) do
-      local text_lower = item.text:lower()
-      if text_lower:find(query_lower, 1, true) then
-        table.insert(matched, { index = item.index, text = item.text })
-      end
-    end
-
-    return matched
-  end
-
   require("mini.pick").setup({
     delay = { async = 10, busy = 50 },
     window = {
       config = { border = "single" },
       prompt_prefix = "> ",
     },
-    match = case_insensitive_match,
     mappings = {
       send_all_to_qf = {
         char = "<C-q>",
