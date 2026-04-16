@@ -619,9 +619,9 @@ later(function()
 end)
 
 -- mini.jump - Improved f/F/t/T jumps
-later(function()
-  require("mini.jump").setup()
-end)
+-- later(function()
+--   require("mini.jump").setup()
+-- end)
 
 -- mini.jump2d - Jump to any location on screen
 later(function()
