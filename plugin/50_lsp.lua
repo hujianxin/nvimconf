@@ -20,7 +20,7 @@ now_if_args(function()
     vim.lsp.config("*", { capabilities = capabilities })
 
     -- Enable LSP servers
-    vim.lsp.enable({ "ty", "gopls", "rust_analyzer", "jsonls", "yamlls", "protols", "lua_ls" })
+    vim.lsp.enable({ "ty", "gopls", "rust_analyzer", "jsonls", "yamlls", "protols", "lua_ls", "zls" })
   end)
 
   -- Disable default LSP keymaps

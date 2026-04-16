@@ -549,6 +549,22 @@ later(function()
   require("mini.cursorword").setup()
 end)
 
+-- mini.indentscope - Indent scope visualization
+later(function()
+  require("mini.indentscope").setup({
+    symbol = "╎",
+    draw = {
+      delay = 0,
+      animation = function()
+        return 0
+      end,
+    },
+    options = {
+      try_as_border = true,
+    },
+  })
+end)
+
 -- mini.diff - Git diff highlighting
 later(function()
   local mini_diff = require("mini.diff")
