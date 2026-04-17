@@ -28,7 +28,13 @@ local function ensure_dap()
   local dap = require("dap")
   local dapview = require("dap-view")
 
-  dapview.setup({})
+  dapview.setup({
+    winbar = {
+      controls = {
+        enabled = true,
+      },
+    },
+  })
 
   -- Auto open/close dap-view with debug sessions
   dap.listeners.after.event_initialized["dap-view"] = function()
