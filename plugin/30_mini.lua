@@ -438,24 +438,28 @@ later(function()
   local miniclue = require("mini.clue")
   miniclue.setup({
     triggers = {
-      { mode = "n", keys = "<Leader>" },
-      { mode = "x", keys = "<Leader>" },
+      -- Leader triggers
+      { mode = { "n", "x" }, keys = "<Leader>" },
+      -- `[` and `]` keys
+      { mode = "n", keys = "[" },
+      { mode = "n", keys = "]" },
+      -- Built-in completion
       { mode = "i", keys = "<C-x>" },
-      { mode = "n", keys = "g" },
-      { mode = "x", keys = "g" },
-      { mode = "n", keys = "'" },
-      { mode = "n", keys = "`" },
-      { mode = "x", keys = "'" },
-      { mode = "x", keys = "`" },
-      { mode = "n", keys = '"' },
-      { mode = "x", keys = '"' },
-      { mode = "i", keys = "<C-r>" },
-      { mode = "c", keys = "<C-r>" },
+      -- `g` key
+      { mode = { "n", "x" }, keys = "g" },
+      -- Marks
+      { mode = { "n", "x" }, keys = "'" },
+      { mode = { "n", "x" }, keys = "`" },
+      -- Registers
+      { mode = { "n", "x" }, keys = '"' },
+      { mode = { "i", "c" }, keys = "<C-r>" },
+      -- Window commands
       { mode = "n", keys = "<C-w>" },
-      { mode = "n", keys = "z" },
-      { mode = "x", keys = "z" },
+      -- `z` key
+      { mode = { "n", "x" }, keys = "z" },
     },
     clues = {
+      miniclue.gen_clues.square_brackets(),
       miniclue.gen_clues.builtin_completion(),
       miniclue.gen_clues.g(),
       miniclue.gen_clues.marks(),
@@ -474,13 +478,7 @@ later(function()
       { mode = "n", keys = "<Leader>X", desc = "Trouble" },
     },
     window = {
-      config = {
-        anchor = "SE",
-        row = "auto",
-        col = "auto",
-        width = "auto",
-        border = "single",
-      },
+      config = {},
       delay = 500,
       scroll_down = "<C-d>",
       scroll_up = "<C-u>",
