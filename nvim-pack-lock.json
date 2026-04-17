@@ -72,6 +72,14 @@
       "rev": "5fe583a69a9bf3e1b5eac9b94e1f85b5ce59dd6b",
       "src": "https://github.com/StephanMoeller/neotest-zig"
     },
+    "nvim-dap": {
+      "rev": "45a69eba683a2c448dd9ecfc4de89511f0646b5f",
+      "src": "https://github.com/mfussenegger/nvim-dap"
+    },
+    "nvim-dap-view": {
+      "rev": "57961b30d2d4054d2e1f549a2edad2e47731007f",
+      "src": "https://github.com/igorlfs/nvim-dap-view"
+    },
     "nvim-lspconfig": {
       "rev": "8a9378a822719346a0288fa004dab302ca3c0a8f",
       "src": "https://github.com/neovim/nvim-lspconfig"
