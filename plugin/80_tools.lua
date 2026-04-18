@@ -46,6 +46,15 @@ vim.keymap.set("n", "<leader>Or", function()
   ensure_overseer()
   vim.cmd("OverseerRun")
 end, { desc = "Run" })
+vim.keymap.set("n", "<leader>OR", function()
+  ensure_overseer()
+  local tasks = require("overseer").list_tasks({ recent = true })
+  if #tasks > 0 then
+    tasks[1]:restart()
+  else
+    vim.notify("No recent task to rerun", vim.log.levels.WARN)
+  end
+end, { desc = "Rerun last" })
 vim.keymap.set("n", "<leader>Os", function()
   ensure_overseer()
   vim.cmd("OverseerShell")
@@ -254,8 +263,9 @@ local function ensure_compile_mode()
   end
   compile_mode_loaded = true
   add({
-    "https://github.com/ej-shafran/compile-mode.nvim",
     "https://github.com/nvim-lua/plenary.nvim",
+    "https://github.com/m00qek/baleia.nvim",
+    "https://github.com/ej-shafran/compile-mode.nvim",
   })
 
   vim.g.compile_mode = {

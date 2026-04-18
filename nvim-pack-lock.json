@@ -1,20 +1,16 @@
 {
   "plugins": {
-    "FixCursorHold.nvim": {
-      "rev": "1900f89dc17c603eec29960f57c00bd9ae696495",
-      "src": "https://github.com/antoinemadec/FixCursorHold.nvim"
-    },
     "auto-save.nvim": {
       "rev": "9aabcb8396224dcbf8d51c0c1d620d88a46e89d7",
       "src": "https://github.com/okuuva/auto-save.nvim"
     },
-    "blink.cmp": {
-      "rev": "456d38d1cd3743926f329204c2340f3e7840aad6",
-      "src": "https://github.com/saghen/blink.cmp"
+    "baleia.nvim": {
+      "rev": "32617940adb2eea56e85a64883a19961ceac9641",
+      "src": "https://github.com/m00qek/baleia.nvim"
     },
-    "codediff.nvim": {
-      "rev": "832f1ecc5f8b15a44cf7537e31d3266d657775b1",
-      "src": "https://github.com/esmuellert/codediff.nvim"
+    "blink.cmp": {
+      "rev": "c573a15a62bd0bfd4006ee0849b24f5404395500",
+      "src": "https://github.com/saghen/blink.cmp"
     },
     "compile-mode.nvim": {
       "rev": "ce34ad9e69cb6a2d9f71017f4cb090195fb9fc09",
@@ -32,61 +28,21 @@
       "rev": "6cd7280adead7f586db6fccbd15d2cac7e2188b9",
       "src": "https://github.com/rafamadriz/friendly-snippets"
     },
-    "grug-far.nvim": {
-      "rev": "21604255d0e8f9968322f61f2b6c09e5efe1285a",
-      "src": "https://github.com/MagicDuck/grug-far.nvim"
-    },
     "guess-indent.nvim": {
       "rev": "84a4987ff36798c2fc1169cbaff67960aed9776f",
       "src": "https://github.com/NMAC427/guess-indent.nvim"
     },
-    "lazygit.nvim": {
-      "rev": "a04ad0dbc725134edbee3a5eea29290976695357",
-      "src": "https://github.com/kdheepak/lazygit.nvim"
-    },
-    "mini.icons": {
-      "rev": "7fdae2443a0e2910015ca39ad74b50524ee682d3",
-      "src": "https://github.com/nvim-mini/mini.icons"
-    },
     "mini.nvim": {
-      "rev": "c67822c53e8e282fe863343e88aa0a8ca3534059",
+      "rev": "29447d7b0e1fc9bc9d0384953e63be3fae816736",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
     "multicursor.nvim": {
       "rev": "704b99f10a72cc05d370cfeb294ff83412a8ab55",
       "src": "https://github.com/jake-stewart/multicursor.nvim"
     },
-    "neotest": {
-      "rev": "fd0b7986dd0ae04e38ec7dc0c78a432e3820839c",
-      "src": "https://github.com/nvim-neotest/neotest"
-    },
-    "neotest-go": {
-      "rev": "59b50505053f9c45a9febb79e11a56206c3e3901",
-      "src": "https://github.com/nvim-neotest/neotest-go"
-    },
-    "neotest-python": {
-      "rev": "e6df4f1892f6137f58135917db24d1655937d831",
-      "src": "https://github.com/nvim-neotest/neotest-python"
-    },
-    "neotest-zig": {
-      "rev": "5fe583a69a9bf3e1b5eac9b94e1f85b5ce59dd6b",
-      "src": "https://github.com/StephanMoeller/neotest-zig"
-    },
-    "nvim-dap": {
-      "rev": "45a69eba683a2c448dd9ecfc4de89511f0646b5f",
-      "src": "https://github.com/mfussenegger/nvim-dap"
-    },
-    "nvim-dap-view": {
-      "rev": "57961b30d2d4054d2e1f549a2edad2e47731007f",
-      "src": "https://github.com/igorlfs/nvim-dap-view"
-    },
     "nvim-lspconfig": {
-      "rev": "8a9378a822719346a0288fa004dab302ca3c0a8f",
+      "rev": "4b7fbaa239c5db6b36f424a4521ca9f1a401be33",
       "src": "https://github.com/neovim/nvim-lspconfig"
-    },
-    "nvim-nio": {
-      "rev": "21f5324bfac14e22ba26553caf69ec76ae8a7662",
-      "src": "https://github.com/nvim-neotest/nvim-nio"
     },
     "nvim-treesitter": {
       "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
@@ -111,22 +67,6 @@
     "promise-async": {
       "rev": "119e8961014c9bfaf1487bf3c2a393d254f337e2",
       "src": "https://github.com/kevinhwang91/promise-async"
-    },
-    "quicker.nvim": {
-      "rev": "063cc44da1eef8681bbd653b29d3bc961780886a",
-      "src": "https://github.com/stevearc/quicker.nvim"
-    },
-    "rustaceanvim": {
-      "rev": "f95309a90295be99644efc46fa8127336d21730c",
-      "src": "https://github.com/mrcjkb/rustaceanvim"
-    },
-    "toggleterm.nvim": {
-      "rev": "9a88eae817ef395952e08650b3283726786fb5fb",
-      "src": "https://github.com/akinsho/toggleterm.nvim"
-    },
-    "trouble.nvim": {
-      "rev": "bd67efe408d4816e25e8491cc5ad4088e708a69a",
-      "src": "https://github.com/folke/trouble.nvim"
     }
   }
 }
