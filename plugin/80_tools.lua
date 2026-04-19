@@ -22,7 +22,7 @@ local function ensure_overseer()
     component_aliases = {
       default = {
         "on_exit_set_status",
-        { "on_output_quickfix", open = false },
+        -- { "on_output_quickfix", open = false },
         { "on_complete_notify", system = "unfocused" },
         { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
       },
