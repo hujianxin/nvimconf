@@ -22,6 +22,7 @@ local function ensure_overseer()
     component_aliases = {
       default = {
         "on_exit_set_status",
+        { "on_output_quickfix", open = false },
         { "on_complete_notify", system = "unfocused" },
         { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
       },
@@ -251,38 +252,6 @@ vim.keymap.set("n", "<c-g>", function()
   ensure_lazygit()
   vim.cmd("LazyGit")
 end, { desc = "LazyGit" })
-
--- ============================================================================
--- Compile Mode (lazy-loaded on command)
--- ============================================================================
-
-local compile_mode_loaded = false
-local function ensure_compile_mode()
-  if compile_mode_loaded then
-    return
-  end
-  compile_mode_loaded = true
-  add({
-    "https://github.com/nvim-lua/plenary.nvim",
-    "https://github.com/m00qek/baleia.nvim",
-    "https://github.com/ej-shafran/compile-mode.nvim",
-  })
-
-  vim.g.compile_mode = {
-    input_word_completion = true,
-    baleia_setup = true,
-    bang_expansion = true,
-  }
-end
-
-vim.keymap.set("n", "<leader>Cc", function()
-  ensure_compile_mode()
-  vim.cmd("Compile")
-end, { desc = "Compile" })
-vim.keymap.set("n", "<leader>Cr", function()
-  ensure_compile_mode()
-  vim.cmd("Recompile")
-end, { desc = "Recompile" })
 
 -- ============================================================================
 -- Kulala (HTTP client)

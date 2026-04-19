@@ -4,17 +4,9 @@
       "rev": "9aabcb8396224dcbf8d51c0c1d620d88a46e89d7",
       "src": "https://github.com/okuuva/auto-save.nvim"
     },
-    "baleia.nvim": {
-      "rev": "32617940adb2eea56e85a64883a19961ceac9641",
-      "src": "https://github.com/m00qek/baleia.nvim"
-    },
     "blink.cmp": {
       "rev": "c573a15a62bd0bfd4006ee0849b24f5404395500",
       "src": "https://github.com/saghen/blink.cmp"
-    },
-    "compile-mode.nvim": {
-      "rev": "ce34ad9e69cb6a2d9f71017f4cb090195fb9fc09",
-      "src": "https://github.com/ej-shafran/compile-mode.nvim"
     },
     "conform.nvim": {
       "rev": "086a40dc7ed8242c03be9f47fbcee68699cc2395",
@@ -31,6 +23,10 @@
     "guess-indent.nvim": {
       "rev": "84a4987ff36798c2fc1169cbaff67960aed9776f",
       "src": "https://github.com/NMAC427/guess-indent.nvim"
+    },
+    "lazygit.nvim": {
+      "rev": "a04ad0dbc725134edbee3a5eea29290976695357",
+      "src": "https://github.com/kdheepak/lazygit.nvim"
     },
     "mini.nvim": {
       "rev": "29447d7b0e1fc9bc9d0384953e63be3fae816736",
@@ -67,6 +63,10 @@
     "promise-async": {
       "rev": "119e8961014c9bfaf1487bf3c2a393d254f337e2",
       "src": "https://github.com/kevinhwang91/promise-async"
+    },
+    "quicker.nvim": {
+      "rev": "063cc44da1eef8681bbd653b29d3bc961780886a",
+      "src": "https://github.com/stevearc/quicker.nvim"
     }
   }
 }

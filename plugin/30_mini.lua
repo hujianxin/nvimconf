@@ -468,7 +468,7 @@ later(function()
       miniclue.gen_clues.z(),
       { mode = "n", keys = "<Leader>b", desc = "Buffer" },
       { mode = "n", keys = "<Leader>t", desc = "Toggle/Trim" },
-      { mode = "n", keys = "<Leader>C", desc = "Compile/CodeDiff" },
+      { mode = "n", keys = "<Leader>C", desc = "CodeDiff" },
       { mode = "n", keys = "<Leader>D", desc = "Debug" },
       { mode = "n", keys = "<Leader>G", desc = "Git" },
       { mode = "n", keys = "<Leader>K", desc = "Kulala (HTTP)" },
