@@ -12,10 +12,7 @@
       "rev": "832f1ecc5f8b15a44cf7537e31d3266d657775b1",
       "src": "https://github.com/esmuellert/codediff.nvim"
     },
-    "compile-mode.nvim": {
-      "rev": "ce34ad9e69cb6a2d9f71017f4cb090195fb9fc09",
-      "src": "https://github.com/ej-shafran/compile-mode.nvim"
-    },
+    
     "conform.nvim": {
       "rev": "086a40dc7ed8242c03be9f47fbcee68699cc2395",
       "src": "https://github.com/stevearc/conform.nvim"
