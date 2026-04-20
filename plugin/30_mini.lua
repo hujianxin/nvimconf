@@ -685,11 +685,11 @@ later(function()
       ["`"] = { action = "closeopen", pair = "``", neigh_pattern = "[^\\].", register = { cr = false } },
     },
   })
-  -- Disable single quotes in Rust files
-  Config.new_autocmd("FileType", "rust", function()
-    vim.keymap.set("i", "'", "'", { buffer = true })
-  end, "Disable single quotes in Rust")
 end)
+-- Disable single quotes in Rust files
+Config.new_autocmd("FileType", "rust", function()
+  vim.keymap.set("i", "'", "'", { buffer = true })
+end, "Disable single quotes in Rust")
 
 -- mini.pick - General purpose interactive picker
 later(function()
