@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+staged_lua=()
+while IFS= read -r f; do
+  staged_lua+=("$f")
+done < <(git diff --cached --name-only --diff-filter=ACM -- '*.lua')
+
+if [ ${#staged_lua[@]} -eq 0 ]; then
+  exit 0
+fi
+
+if ! command -v stylua &>/dev/null; then
+  echo "pre-commit: stylua not found, skipping format. Install with: cargo install stylua"
+  exit 1
+fi
+
+echo "pre-commit: formatting ${#staged_lua[@]} lua file(s)..."
+stylua "${staged_lua[@]}"
+
+git add "${staged_lua[@]}"
