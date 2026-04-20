@@ -21,8 +21,7 @@
 -- │   ├── 60_completion.lua       Completion (blink.cmp)
 -- │   ├── 65_formatting.lua       Code formatting (conform.nvim)
 -- │   ├── 70_ui.lua               UI plugins (flash, trouble, grug-far)
--- │   ├── 80_tools.lua            Tools (overseer, multicursor, toggleterm, etc.)
--- │   └── 90_test.lua             Testing framework (neotest)
+-- │   └── 80_tools.lua            Tools (overseer, multicursor, toggleterm, etc.)
 -- ├── after/                      Files to override behavior added by plugins
 -- │   ├── ftplugin/               Filetype-specific settings (per-buffer/window)
 -- │   ├── lsp/                    Language server configurations

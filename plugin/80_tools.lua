@@ -26,11 +26,6 @@ local function ensure_overseer()
         { "on_complete_notify", system = "unfocused" },
         { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
       },
-      default_neotest = {
-        "unique",
-        { "on_complete_notify", system = "unfocused", on_change = true },
-        "default",
-      },
     },
   })
 
@@ -75,23 +70,6 @@ vim.keymap.set("n", "<leader>Od", function()
     overseer.run_action(tasks[1])
   end
 end, { desc = "Do quick action" })
-
--- Lazy-loaded user commands
-vim.api.nvim_create_user_command("OverseerTestOutput", function()
-  ensure_overseer()
-  vim.cmd.tabnew()
-  vim.bo.bufhidden = "wipe"
-  require("overseer").create_task_output_view(0, {
-    select = function(self, tasks)
-      for _, task in ipairs(tasks) do
-        if task.metadata.neotest_group_id then
-          return task
-        end
-      end
-      self:dispose()
-    end,
-  })
-end, { desc = "Open a new tab that displays the output of the most recent test" })
 
 vim.api.nvim_create_user_command("Make", function(params)
   ensure_overseer()
