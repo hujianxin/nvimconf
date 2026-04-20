@@ -40,7 +40,6 @@
 -- - `<leader>f` - Find files (mini.pick)
 -- - `<leader>/` - Live grep (mini.pick)
 -- - `<leader>E` - File explorer (mini.extra)
--- - `<leader>fh` - Search help tags
 
 -- Define config table for cross-script communication
 _G.Config = {}

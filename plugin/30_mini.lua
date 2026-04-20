@@ -281,6 +281,9 @@ later(function()
   vim.keymap.set("n", "<leader><space>", function()
     MiniExtra.pickers.history({ scope = ":" })
   end, { desc = "Command history" })
+  vim.keymap.set("n", "<leader>'", function()
+    MiniPick.builtin.resume()
+  end, { desc = "Resume picker" })
   vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Goto definition" })
   vim.keymap.set("n", "gr", function()
     MiniExtra.pickers.lsp({ scope = "references" })
@@ -708,6 +711,7 @@ later(function()
             return
           end
           MiniPick.default_choose_marked(matches.all)
+          MiniPick.stop()
         end,
       },
     },
