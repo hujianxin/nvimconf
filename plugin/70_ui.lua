@@ -68,7 +68,6 @@ local function ensure_trouble()
   trouble_loaded = true
   add({
     "https://github.com/folke/trouble.nvim",
-    "https://github.com/nvim-mini/mini.icons",
   })
 
   require("trouble").setup({
