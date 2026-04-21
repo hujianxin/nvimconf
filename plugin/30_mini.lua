@@ -58,7 +58,7 @@ now(function()
     },
   })
   vim.notify = MiniNotify.make_notify()
-  vim.keymap.set("n", "<leader>tn", "<cmd>lua MiniNotify.show_history()<cr>", { desc = "Show notification history" })
+  vim.keymap.set("n", "<leader>Tn", "<cmd>lua MiniNotify.show_history()<cr>", { desc = "Show notification history" })
 end)
 
 -- mini.sessions - Session management
@@ -470,14 +470,14 @@ later(function()
       miniclue.gen_clues.windows(),
       miniclue.gen_clues.z(),
       { mode = "n", keys = "<Leader>b", desc = "Buffer" },
-      { mode = "n", keys = "<Leader>t", desc = "Toggle/Trim" },
+      { mode = "n", keys = "<Leader>t", desc = "Test" },
       { mode = "n", keys = "<Leader>C", desc = "CodeDiff" },
       { mode = "n", keys = "<Leader>D", desc = "Debug" },
       { mode = "n", keys = "<Leader>G", desc = "Git" },
       { mode = "n", keys = "<Leader>K", desc = "Kulala (HTTP)" },
       { mode = "n", keys = "<Leader>O", desc = "Overseer" },
       { mode = "n", keys = "<Leader>S", desc = "Session" },
-      { mode = "n", keys = "<Leader>T", desc = "Test" },
+      { mode = "n", keys = "<Leader>T", desc = "Toggle/Trim" },
       { mode = "n", keys = "<Leader>X", desc = "Trouble" },
     },
     window = {
@@ -751,10 +751,10 @@ end)
 -- mini.trailspace - Trailing whitespace handling
 later(function()
   require("mini.trailspace").setup()
-  vim.keymap.set("n", "<leader>tw", "<cmd>lua MiniTrailspace.trim()<cr>", { desc = "Trim trailing whitespace" })
+  vim.keymap.set("n", "<leader>Tw", "<cmd>lua MiniTrailspace.trim()<cr>", { desc = "Trim trailing whitespace" })
   vim.keymap.set(
     "n",
-    "<leader>tW",
+    "<leader>TW",
     "<cmd>lua MiniTrailspace.trim_last_lines()<cr>",
     { desc = "Trim trailing empty lines" }
   )
