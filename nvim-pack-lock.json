@@ -5,11 +5,11 @@
       "src": "https://github.com/okuuva/auto-save.nvim"
     },
     "blink.cmp": {
-      "rev": "c573a15a62bd0bfd4006ee0849b24f5404395500",
+      "rev": "90d14caca4ae557665ab105080c27d5f289a2e30",
       "src": "https://github.com/saghen/blink.cmp"
     },
     "codediff.nvim": {
-      "rev": "832f1ecc5f8b15a44cf7537e31d3266d657775b1",
+      "rev": "8afc229d38dc13ce71b2ffbb860084b2c726e061",
       "src": "https://github.com/esmuellert/codediff.nvim"
     },
     "conform.nvim": {
@@ -41,11 +41,11 @@
       "src": "https://github.com/kdheepak/lazygit.nvim"
     },
     "mason.nvim": {
-      "rev": "b03fb0f20bc1d43daf558cda981a2be22e73ac42",
+      "rev": "12ddd182d9efbdc848b540f16484a583d52da0fb",
       "src": "https://github.com/williamboman/mason.nvim"
     },
     "mini.nvim": {
-      "rev": "29447d7b0e1fc9bc9d0384953e63be3fae816736",
+      "rev": "5849ef04c32a6a8e55957b946c0a275801d87530",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
     "multicursor.nvim": {
@@ -57,11 +57,11 @@
       "src": "https://github.com/mfussenegger/nvim-dap"
     },
     "nvim-dap-view": {
-      "rev": "57961b30d2d4054d2e1f549a2edad2e47731007f",
+      "rev": "dd43736f30ed70571a02e8c560ab69746ad7a1ed",
       "src": "https://github.com/igorlfs/nvim-dap-view"
     },
     "nvim-lspconfig": {
-      "rev": "4b7fbaa239c5db6b36f424a4521ca9f1a401be33",
+      "rev": "e146efacbafed3789ac568abcc5a981c5decaa58",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
@@ -97,7 +97,7 @@
       "src": "https://github.com/stevearc/quicker.nvim"
     },
     "rustaceanvim": {
-      "rev": "f95309a90295be99644efc46fa8127336d21730c",
+      "rev": "f52d71ee7f01f04a820d83530388de8fab1bda05",
       "src": "https://github.com/mrcjkb/rustaceanvim"
     },
     "toggleterm.nvim": {
