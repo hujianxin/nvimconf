@@ -12,6 +12,9 @@ local function ensure_test()
   test_loaded = true
   add({ "https://github.com/vim-test/vim-test" })
   vim.g["test#strategy"] = "neovim_sticky"
+  vim.g["test#preserve_screen"] = 0
+  vim.g["test#neovim_sticky#kill_previous"] = 1
+  vim.g["test#neovim_sticky#reopen_window"] = 1
 end
 
 vim.api.nvim_create_user_command("TestNearest", function()
