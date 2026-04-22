@@ -30,6 +30,9 @@ now(function()
     },
     silent = true,
   })
+  -- mini.basics overrides nvim 0.12's default LSP mappings
+  vim.keymap.set("n", "gO", vim.lsp.buf.document_symbol, { desc = "vim.lsp.buf.document_symbol()" })
+  vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help, { desc = "vim.lsp.buf.signature_help()" })
 end)
 
 -- Set colorscheme from mini.nvim
@@ -534,6 +537,7 @@ later(function()
       miniclue.gen_clues.windows(),
       miniclue.gen_clues.z(),
       { mode = "n", keys = "<Leader>b", desc = "Buffer" },
+      { mode = "n", keys = "<Leader>v", desc = "Visits" },
       { mode = "n", keys = "<Leader>t", desc = "Test" },
       { mode = "n", keys = "<Leader>C", desc = "CodeDiff" },
       { mode = "n", keys = "<Leader>D", desc = "Debug" },
@@ -793,7 +797,7 @@ end)
 later(function()
   require("mini.visits").setup()
 
-  vim.keymap.set("n", "<leader>v", function()
+  vim.keymap.set("n", "<leader>vv", function()
     MiniVisits.select_path()
   end, { desc = "Visits: Select recent location" })
   vim.keymap.set("n", "<leader>va", function()
