@@ -44,18 +44,16 @@ now_if_args(function()
   end
 
   -- Enable tree-sitter after opening a file for target languages
-  local filetypes = {}
-  for _, lang in ipairs(languages) do
-    for _, ft in ipairs(vim.treesitter.language.get_filetypes(lang)) do
-      table.insert(filetypes, ft)
-    end
-  end
+  local filetypes = vim
+    .iter(languages)
+    :map(function(l)
+      return vim.treesitter.language.get_filetypes(l)
+    end)
+    :flatten()
+    :totable()
 
   Config.new_autocmd("FileType", filetypes, function(ev)
-    -- Enable treesitter highlighting
     pcall(vim.treesitter.start, ev.buf)
-    -- Enable treesitter-based indentation
-    vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
   end, "Start tree-sitter")
 
   -- Disable for large files
@@ -78,51 +76,33 @@ now_if_args(function()
     local select = require("nvim-treesitter-textobjects.select")
     local move = require("nvim-treesitter-textobjects.move")
 
-    -- Select mappings
-    vim.keymap.set({ "x", "o" }, "af", function()
-      select.select_textobject("@function.outer", "textobjects")
-    end)
-    vim.keymap.set({ "x", "o" }, "if", function()
-      select.select_textobject("@function.inner", "textobjects")
-    end)
-    vim.keymap.set({ "x", "o" }, "ac", function()
-      select.select_textobject("@class.outer", "textobjects")
-    end)
-    vim.keymap.set({ "x", "o" }, "ic", function()
-      select.select_textobject("@class.inner", "textobjects")
-    end)
-    vim.keymap.set({ "x", "o" }, "ab", function()
-      select.select_textobject("@block.outer", "textobjects")
-    end)
-    vim.keymap.set({ "x", "o" }, "ib", function()
-      select.select_textobject("@block.inner", "textobjects")
-    end)
+    for _, spec in ipairs({
+      { "af", "@function.outer" },
+      { "if", "@function.inner" },
+      { "ac", "@class.outer" },
+      { "ic", "@class.inner" },
+      { "ab", "@block.outer" },
+      { "ib", "@block.inner" },
+    }) do
+      vim.keymap.set({ "x", "o" }, spec[1], function()
+        select.select_textobject(spec[2], "textobjects")
+      end)
+    end
 
-    -- Move mappings
-    vim.keymap.set("n", "]m", function()
-      move.goto_next_start("@function.outer", "textobjects")
-    end)
-    vim.keymap.set("n", "]]", function()
-      move.goto_next_start("@class.outer", "textobjects")
-    end)
-    vim.keymap.set("n", "]M", function()
-      move.goto_next_end("@function.outer", "textobjects")
-    end)
-    vim.keymap.set("n", "][", function()
-      move.goto_next_end("@class.outer", "textobjects")
-    end)
-    vim.keymap.set("n", "[m", function()
-      move.goto_previous_start("@function.outer", "textobjects")
-    end)
-    vim.keymap.set("n", "[[", function()
-      move.goto_previous_start("@class.outer", "textobjects")
-    end)
-    vim.keymap.set("n", "[M", function()
-      move.goto_previous_end("@function.outer", "textobjects")
-    end)
-    vim.keymap.set("n", "[]", function()
-      move.goto_previous_end("@class.outer", "textobjects")
-    end)
+    for _, spec in ipairs({
+      { "]m", "goto_next_start", "@function.outer" },
+      { "]][", "goto_next_start", "@class.outer" },
+      { "]M", "goto_next_end", "@function.outer" },
+      { "][", "goto_next_end", "@class.outer" },
+      { "[m", "goto_previous_start", "@function.outer" },
+      { "[[", "goto_previous_start", "@class.outer" },
+      { "[M", "goto_previous_end", "@function.outer" },
+      { "[]", "goto_previous_end", "@class.outer" },
+    }) do
+      vim.keymap.set("n", spec[1], function()
+        move[spec[2]](spec[3], "textobjects")
+      end)
+    end
   end)
 end)
 
