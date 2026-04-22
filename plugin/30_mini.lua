@@ -312,7 +312,7 @@ later(function()
     },
     { "gd", vim.lsp.buf.definition, "Goto definition" },
     {
-      "gr",
+      "gR",
       function()
         MiniExtra.pickers.lsp({ scope = "references" })
       end,

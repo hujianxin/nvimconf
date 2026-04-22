@@ -38,14 +38,8 @@ now_if_args(function()
   vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostic loclist", silent = true })
 
   -- LSP buffer local mappings
-  local default_keymaps = { "grn", "gra", "grr", "gri", "grt", "grx" }
   Config.new_autocmd("LspAttach", "*", function(args)
     local bo = { buffer = args.buf, silent = true }
-
-    for _, key in ipairs(default_keymaps) do
-      pcall(vim.keymap.del, "n", key, { buffer = args.buf })
-    end
-
     vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", bo, { desc = "Show hover" }))
     vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, vim.tbl_extend("force", bo, { desc = "Rename" }))
     vim.keymap.set(
