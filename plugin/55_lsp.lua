@@ -1,9 +1,13 @@
 -- ============================================================================
--- LSP Configuration (plugin/50_lsp.lua)
+-- LSP & Completion Configuration (plugin/55_lsp.lua)
 -- ============================================================================
 
 local add = vim.pack.add
-local now_if_args, later = Config.now_if_args, Config.later
+local now_if_args, later, on_event = Config.now_if_args, Config.later, Config.on_event
+
+-- ============================================================================
+-- LSP Setup
+-- ============================================================================
 
 now_if_args(function()
   add({
@@ -81,3 +85,35 @@ end)
 vim.api.nvim_create_user_command("OR", function()
   vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } } })
 end, {})
+
+-- ============================================================================
+-- blink.cmp - Completion (loaded lazily on InsertEnter)
+-- ============================================================================
+
+on_event("InsertEnter", function()
+  add({
+    "https://github.com/saghen/blink.cmp",
+    "https://github.com/rafamadriz/friendly-snippets",
+  })
+
+  require("blink.cmp").setup({
+    keymap = {
+      preset = "default",
+      ["<CR>"] = { "accept", "fallback" },
+      ["<Tab>"] = { "accept", "fallback" },
+    },
+    appearance = { nerd_font_variant = "mono" },
+    signature = { enabled = true },
+    sources = {
+      default = { "lsp", "path", "snippets", "buffer" },
+      providers = {
+        snippets = {
+          opts = {
+            search_paths = { vim.fn.stdpath("config") .. "/snippets" },
+          },
+        },
+      },
+    },
+    fuzzy = { implementation = "lua" },
+  })
+end)
