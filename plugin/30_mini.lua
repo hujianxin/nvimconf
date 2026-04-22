@@ -67,15 +67,9 @@ end)
 -- mini.sessions - Session management
 now(function()
   require("mini.sessions").setup({
-    -- Directory where sessions are stored (default: vim.fn.stdpath('data') .. '/session')
     directory = vim.fn.stdpath("data") .. "/sessions",
-    -- Whether to force possibly harmful actions (meaning depends on function)
-    force = { read = false, write = true, delete = false },
-    -- Hook functions for actions (nil means no hook)
+    force = { write = true },
     hooks = {
-      -- Before successful action
-      pre = { read = nil, write = nil, delete = nil },
-      -- After successful action
       post = {
         read = function()
           vim.notify("Session loaded", vim.log.levels.INFO)
@@ -83,13 +77,11 @@ now(function()
         write = function()
           vim.notify("Session saved", vim.log.levels.INFO)
         end,
-        delete = nil,
       },
     },
-    -- Whether to print session path after action
-    verbose = { read = false, write = true, delete = true },
+    verbose = { write = true, delete = true },
   })
-  -- Session management keymaps
+
   vim.keymap.set("n", "<leader>Ss", "<cmd>lua MiniSessions.select('read')<cr>", { desc = "Select and load session" })
   vim.keymap.set(
     "n",
@@ -100,22 +92,12 @@ now(function()
   vim.keymap.set("n", "<leader>Sw", "<cmd>lua MiniSessions.write()<cr>", { desc = "Write current session" })
   vim.keymap.set("n", "<leader>Sr", "<cmd>lua MiniSessions.read()<cr>", { desc = "Read last session" })
 
-  -- Auto-save session before exiting Neovim
   Config.new_autocmd("VimLeavePre", "*", function()
-    -- Only save if there are valid buffers (not just empty/nofile buffers)
-    local has_valid_buffer = false
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_loaded(bufnr) then
-        local bufname = vim.api.nvim_buf_get_name(bufnr)
-        local buftype = vim.bo[bufnr].buftype
-        if bufname ~= "" and buftype ~= "nofile" and buftype ~= "quickfix" and buftype ~= "help" then
-          has_valid_buffer = true
-          break
-        end
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == "" and vim.api.nvim_buf_get_name(buf) ~= "" then
+        MiniSessions.write("auto", { force = true })
+        return
       end
-    end
-    if has_valid_buffer then
-      MiniSessions.write("auto", { force = true })
     end
   end, "Auto-save session before exit")
 end)
@@ -128,23 +110,7 @@ now(function()
   local orig_section_mode = MiniStatusline.section_mode
   MiniStatusline.section_mode = function(args)
     local mode, mode_hl = orig_section_mode(args)
-    local mode_map = {
-      Normal = "NOR",
-      Insert = "INS",
-      Visual = "VIS",
-      ["V-Line"] = "V-L",
-      ["V-Block"] = "V-B",
-      Select = "SEL",
-      ["S-Line"] = "S-L",
-      ["S-Block"] = "S-B",
-      Replace = "REP",
-      Command = "CMD",
-      Prompt = "PRM",
-      Shell = "SHL",
-      Terminal = "TRM",
-      Unknown = "UNK",
-    }
-    return mode_map[mode] or mode:sub(1, 3):upper(), mode_hl
+    return mode:sub(1, 3):upper(), mode_hl
   end
 
   MiniStatusline.setup({
@@ -192,24 +158,19 @@ now_if_args(function()
       mini_files.close()
     end, { buffer = buf_id, desc = "Close mini.files" })
     -- Split keymaps
-    local map_split = function(buf, lhs, direction, desc)
-      local rhs = function()
-        local new_target_window
+    local map_split = function(buf, lhs, cmd, desc)
+      vim.keymap.set("n", lhs, function()
+        local win
         vim.api.nvim_win_call(vim.api.nvim_get_current_win(), function()
-          if direction == "vertical" then
-            vim.cmd("vsplit")
-          elseif direction == "horizontal" then
-            vim.cmd("split")
-          end
-          new_target_window = vim.api.nvim_get_current_win()
+          vim.cmd(cmd)
+          win = vim.api.nvim_get_current_win()
         end)
-        mini_files.set_target_window(new_target_window)
+        mini_files.set_target_window(win)
         mini_files.go_in({ close_on_file = true })
-      end
-      vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
+      end, { buffer = buf, desc = desc })
     end
-    map_split(buf_id, "<C-x>", "horizontal", "Split open")
-    map_split(buf_id, "<C-v>", "vertical", "Vertical split open")
+    map_split(buf_id, "<C-x>", "split", "Split open")
+    map_split(buf_id, "<C-v>", "vsplit", "Vertical split open")
     -- Tab keymap
     vim.keymap.set("n", "<C-t>", function()
       local new_target_window
@@ -278,47 +239,103 @@ later(function()
   local MiniExtra = require("mini.extra")
 
   -- Keymaps for mini.pick + mini.extra
-  vim.keymap.set("n", "<leader>f", function()
-    MiniPick.builtin.files()
-  end, { desc = "Find files" })
-  vim.keymap.set("n", "<leader>/", function()
-    MiniPick.builtin.grep_live()
-  end, { desc = "Live grep" })
-  vim.keymap.set("n", "<C-e>", function()
-    MiniPick.builtin.buffers()
-  end, { desc = "Find buffers" })
-  vim.keymap.set("n", "<leader>bb", function()
-    MiniPick.builtin.buffers()
-  end, { desc = "Find buffers" })
-  vim.keymap.set("n", "<leader>g", function()
-    MiniExtra.pickers.git_files()
-  end, { desc = "Git files" })
-  vim.keymap.set("n", "<leader>o", function()
-    MiniExtra.pickers.lsp({ scope = "document_symbol" })
-  end, { desc = "Document symbols" })
-  vim.keymap.set("n", "<leader>s", function()
-    MiniExtra.pickers.lsp({ scope = "workspace_symbol_live" })
-  end, { desc = "Workspace symbols" })
-  vim.keymap.set("n", "<leader>d", function()
-    MiniExtra.pickers.diagnostic()
-  end, { desc = "Diagnostics" })
-  vim.keymap.set("n", "<leader><space>", function()
-    MiniExtra.pickers.history({ scope = ":" })
-  end, { desc = "Command history" })
-  vim.keymap.set("n", "<leader>'", function()
-    MiniPick.builtin.resume()
-  end, { desc = "Resume picker" })
-  vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Goto definition" })
-  vim.keymap.set("n", "gr", function()
-    MiniExtra.pickers.lsp({ scope = "references" })
-  end, { desc = "Goto references" })
-  vim.keymap.set("n", "gi", function()
-    MiniExtra.pickers.lsp({ scope = "implementation" })
-  end, { desc = "Goto implementation" })
-  vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, { desc = "Goto type definition" })
-  vim.keymap.set("n", "<leader>E", function()
-    MiniExtra.pickers.explorer()
-  end, { desc = "File explorer" })
+  for _, spec in ipairs({
+    {
+      "<leader>f",
+      function()
+        MiniPick.builtin.files()
+      end,
+      "Find files",
+    },
+    {
+      "<leader>/",
+      function()
+        MiniPick.builtin.grep_live()
+      end,
+      "Live grep",
+    },
+    {
+      "<C-e>",
+      function()
+        MiniPick.builtin.buffers()
+      end,
+      "Find buffers",
+    },
+    {
+      "<leader>bb",
+      function()
+        MiniPick.builtin.buffers()
+      end,
+      "Find buffers",
+    },
+    {
+      "<leader>g",
+      function()
+        MiniExtra.pickers.git_files()
+      end,
+      "Git files",
+    },
+    {
+      "<leader>o",
+      function()
+        MiniExtra.pickers.lsp({ scope = "document_symbol" })
+      end,
+      "Document symbols",
+    },
+    {
+      "<leader>s",
+      function()
+        MiniExtra.pickers.lsp({ scope = "workspace_symbol_live" })
+      end,
+      "Workspace symbols",
+    },
+    {
+      "<leader>d",
+      function()
+        MiniExtra.pickers.diagnostic()
+      end,
+      "Diagnostics",
+    },
+    {
+      "<leader><space>",
+      function()
+        MiniExtra.pickers.history({ scope = ":" })
+      end,
+      "Command history",
+    },
+    {
+      "<leader>'",
+      function()
+        MiniPick.builtin.resume()
+      end,
+      "Resume picker",
+    },
+    { "gd", vim.lsp.buf.definition, "Goto definition" },
+    {
+      "gr",
+      function()
+        MiniExtra.pickers.lsp({ scope = "references" })
+      end,
+      "Goto references",
+    },
+    {
+      "gi",
+      function()
+        MiniExtra.pickers.lsp({ scope = "implementation" })
+      end,
+      "Goto implementation",
+    },
+    { "gy", vim.lsp.buf.type_definition, "Goto type definition" },
+    {
+      "<leader>E",
+      function()
+        MiniExtra.pickers.explorer()
+      end,
+      "File explorer",
+    },
+  }) do
+    vim.keymap.set("n", spec[1], spec[2], { desc = spec[3] })
+  end
 end)
 
 -- mini.snippets - Snippet management
@@ -411,33 +428,31 @@ later(function()
         table.insert(steps.pre, require("mini.align").gen_step.trim())
       end,
       ["t"] = function(steps, opts)
-        local delimiters = {
-          [[=]],
-          [[=>]],
-          [[//=]],
-          [[!==]],
-          [[==]],
-          [[%=]],
-          [[/=]],
-          [[-=]],
-          [[+=]],
-          [[*=]],
-          [[&=]],
-          [[|=]],
-          [[^=]],
-          [[%=]],
-          [[:=]],
-          [[::=]],
-          [[<-]],
-          [[->]],
-          [[=>]],
-          [[>]],
-          [[<]],
-          [[>=]],
-          [[<=]],
-          [[~=]],
+        local ops = {
+          "=",
+          "=>",
+          "//=",
+          "!==",
+          "==",
+          ">=",
+          "<=",
+          "~=",
+          "%=",
+          "/=",
+          "-=",
+          "+=",
+          "*=",
+          "&=",
+          "|=",
+          "^=",
+          ":=",
+          "::=",
+          "<-",
+          "->",
+          ">",
+          "<",
         }
-        opts.split_pattern = "(" .. vim.fn.join(delimiters, "|") .. ")"
+        opts.split_pattern = "(" .. table.concat(ops, "|") .. ")"
       end,
       [","] = function(steps, opts)
         opts.split_pattern = ","
@@ -474,22 +489,7 @@ end)
 
 -- mini.bracketed - Navigate with bracket mappings
 later(function()
-  require("mini.bracketed").setup({
-    buffer = { suffix = "b", options = {} },
-    comment = { suffix = "c", options = {} },
-    conflict = { suffix = "x", options = {} },
-    diagnostic = { suffix = "d", options = {} },
-    file = { suffix = "f", options = {} },
-    indent = { suffix = "i", options = {} },
-    jump = { suffix = "j", options = {} },
-    location = { suffix = "l", options = {} },
-    oldfile = { suffix = "o", options = {} },
-    quickfix = { suffix = "q", options = {} },
-    treesitter = { suffix = "t", options = {} },
-    undo = { suffix = "u", options = {} },
-    window = { suffix = "w", options = {} },
-    yank = { suffix = "y", options = {} },
-  })
+  require("mini.bracketed").setup()
 end)
 
 -- mini.bufremove - Remove buffers without closing windows
@@ -593,20 +593,7 @@ end)
 
 -- mini.comment - Comment operations
 later(function()
-  require("mini.comment").setup({
-    options = {
-      custom_commentstring = nil,
-      ignore_blank_line = false,
-      start_of_line = false,
-      pad_comment_parts = true,
-    },
-    mappings = {
-      comment = "gc",
-      comment_line = "gcc",
-      comment_visual = "gc",
-      textobject = "gc",
-    },
-  })
+  require("mini.comment").setup()
 end)
 
 -- mini.cursorword - Highlight word under cursor
@@ -648,12 +635,11 @@ later(function()
       textobject = "gh",
     },
   })
-  vim.keymap.set("n", "<leader>Gd", function()
+  local toggle_diff = function()
     mini_diff.toggle_overlay(0)
-  end, { desc = "Toggle diff overlay" })
-  vim.keymap.set("n", "<leader>Gh", function()
-    mini_diff.toggle_overlay(0)
-  end, { desc = "Toggle diff overlay" })
+  end
+  vim.keymap.set("n", "<leader>Gd", toggle_diff, { desc = "Toggle diff overlay" })
+  vim.keymap.set("n", "<leader>Gh", toggle_diff, { desc = "Toggle diff overlay" })
   vim.keymap.set("n", "]g", function()
     mini_diff.goto_hunk("next")
   end, { desc = "Next git hunk" })
@@ -737,21 +723,7 @@ end)
 
 -- mini.pairs - Auto pairs
 later(function()
-  local mini_pairs = require("mini.pairs")
-  mini_pairs.setup({
-    modes = { insert = true, command = false, terminal = false },
-    mappings = {
-      ["("] = { action = "open", pair = "()", neigh_pattern = "[^\\]." },
-      ["["] = { action = "open", pair = "[]", neigh_pattern = "[^\\]." },
-      ["{"] = { action = "open", pair = "{}", neigh_pattern = "[^\\]." },
-      [")"] = { action = "close", pair = "()", neigh_pattern = "[^\\]." },
-      ["]"] = { action = "close", pair = "[]", neigh_pattern = "[^\\]." },
-      ["}"] = { action = "close", pair = "{}", neigh_pattern = "[^\\]." },
-      ['"'] = { action = "closeopen", pair = '""', neigh_pattern = "[^\\].", register = { cr = false } },
-      ["'"] = { action = "closeopen", pair = "''", neigh_pattern = "[^%a\\].", register = { cr = false } },
-      ["`"] = { action = "closeopen", pair = "``", neigh_pattern = "[^\\].", register = { cr = false } },
-    },
-  })
+  require("mini.pairs").setup()
 end)
 -- Disable single quotes in Rust files
 Config.new_autocmd("FileType", "rust", function()
@@ -785,14 +757,7 @@ end)
 
 -- mini.splitjoin - Split and join arguments
 later(function()
-  require("mini.splitjoin").setup({
-    detect = {
-      brackets = { "()", "[]", "{}" },
-      separator = ",",
-      add_trailing_separator = false,
-      recursive = false,
-    },
-  })
+  require("mini.splitjoin").setup()
 end)
 
 -- mini.surround - Surround operations
@@ -826,37 +791,17 @@ end)
 
 -- mini.visits - Track and navigate visited file locations
 later(function()
-  local mini_visits = require("mini.visits")
-  mini_visits.setup({
-    -- How many visits to remember per path
-    list = {
-      -- Sort by most recent visits first
-      sort = nil,
-    },
-    -- Store visits data
-    store = {
-      -- Use default path: vim.fn.stdpath('data') .. '/mini-visits'
-      path = nil,
-    },
-  })
+  require("mini.visits").setup()
 
-  -- Keymaps for mini.visits
-  -- Open picker with recent files/locations
   vim.keymap.set("n", "<leader>v", function()
     MiniVisits.select_path()
   end, { desc = "Visits: Select recent location" })
-
-  -- Add a visit for current location
   vim.keymap.set("n", "<leader>va", function()
     MiniVisits.add_label()
-  end, { desc = "Visits: Add label to current location" })
-
-  -- Remove a visit for current location
+  end, { desc = "Visits: Add label" })
   vim.keymap.set("n", "<leader>vr", function()
     MiniVisits.remove_label()
-  end, { desc = "Visits: Remove label from current location" })
-
-  -- List all labeled locations
+  end, { desc = "Visits: Remove label" })
   vim.keymap.set("n", "<leader>vl", function()
     MiniVisits.select_label()
   end, { desc = "Visits: Select labeled location" })
