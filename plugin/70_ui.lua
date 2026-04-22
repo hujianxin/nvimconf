@@ -3,7 +3,7 @@
 -- ============================================================================
 
 local add = vim.pack.add
-local later, on_filetype = Config.later, Config.on_filetype
+local later = Config.later
 
 -- ============================================================================
 -- Flash.nvim - Fast navigation
@@ -39,106 +39,105 @@ later(function()
     },
   })
 
-  vim.keymap.set({ "n", "x", "o" }, "s", function()
-    require("flash").jump()
-  end, { desc = "Flash" })
-  vim.keymap.set({ "n", "x", "o" }, "S", function()
-    require("flash").treesitter()
-  end, { desc = "Flash Treesitter" })
-  vim.keymap.set("o", "r", function()
-    require("flash").remote()
-  end, { desc = "Remote Flash" })
-  vim.keymap.set({ "o", "x" }, "R", function()
-    require("flash").treesitter_search()
-  end, { desc = "Treesitter Search" })
-  vim.keymap.set("c", "<c-s>", function()
-    require("flash").toggle()
-  end, { desc = "Toggle Flash Search" })
+  for _, spec in ipairs({
+    {
+      { "n", "x", "o" },
+      "s",
+      function()
+        require("flash").jump()
+      end,
+      "Flash",
+    },
+    {
+      { "n", "x", "o" },
+      "S",
+      function()
+        require("flash").treesitter()
+      end,
+      "Flash Treesitter",
+    },
+    {
+      { "o" },
+      "r",
+      function()
+        require("flash").remote()
+      end,
+      "Remote Flash",
+    },
+    {
+      { "o", "x" },
+      "R",
+      function()
+        require("flash").treesitter_search()
+      end,
+      "Treesitter Search",
+    },
+    {
+      { "c" },
+      "<c-s>",
+      function()
+        require("flash").toggle()
+      end,
+      "Toggle Flash Search",
+    },
+  }) do
+    vim.keymap.set(spec[1], spec[2], spec[3], { desc = spec[4] })
+  end
 end)
 
 -- ============================================================================
--- Trouble.nvim - Diagnostics and quickfix (lazy-loaded on command)
+-- Trouble.nvim - Diagnostics and quickfix
 -- ============================================================================
 
-local trouble_loaded = false
-local function ensure_trouble()
-  if trouble_loaded then
-    return
+local function trouble_cmd(cmd)
+  if not package.loaded["trouble"] then
+    add({ "https://github.com/folke/trouble.nvim" })
+    require("trouble").setup({
+      icons = {
+        indent = { fold_open = "", fold_closed = "" },
+        folder_open = "",
+        folder_closed = "",
+        kinds = {},
+      },
+    })
   end
-  trouble_loaded = true
-  add({
-    "https://github.com/folke/trouble.nvim",
-  })
-
-  require("trouble").setup({
-    icons = {
-      indent = { fold_open = "", fold_closed = "" },
-      folder_open = "",
-      folder_closed = "",
-      kinds = {},
-    },
-  })
+  vim.cmd(cmd)
 end
 
-vim.keymap.set("n", "<leader>XX", function()
-  ensure_trouble()
-  vim.cmd("Trouble diagnostics toggle")
-end, { desc = "Diagnostics" })
-vim.keymap.set("n", "<leader>Xx", function()
-  ensure_trouble()
-  vim.cmd("Trouble diagnostics toggle filter.buf=0")
-end, { desc = "Buffer Diagnostics" })
-vim.keymap.set("n", "<leader>Xs", function()
-  ensure_trouble()
-  vim.cmd("Trouble symbols toggle focus=false")
-end, { desc = "Symbols" })
-vim.keymap.set("n", "<leader>Xl", function()
-  ensure_trouble()
-  vim.cmd("Trouble lsp toggle focus=false win.position=right")
-end, { desc = "LSP Definitions/References" })
-vim.keymap.set("n", "<leader>XL", function()
-  ensure_trouble()
-  vim.cmd("Trouble loclist toggle")
-end, { desc = "Location List" })
-vim.keymap.set("n", "<leader>XQ", function()
-  ensure_trouble()
-  vim.cmd("Trouble qflist toggle")
-end, { desc = "Quickfix List" })
+for _, spec in ipairs({
+  { "<leader>XX", "Trouble diagnostics toggle", "Diagnostics" },
+  { "<leader>Xx", "Trouble diagnostics toggle filter.buf=0", "Buffer Diagnostics" },
+  { "<leader>Xs", "Trouble symbols toggle focus=false", "Symbols" },
+  { "<leader>Xl", "Trouble lsp toggle focus=false win.position=right", "LSP Definitions/References" },
+  { "<leader>XL", "Trouble loclist toggle", "Location List" },
+  { "<leader>XQ", "Trouble qflist toggle", "Quickfix List" },
+}) do
+  vim.keymap.set("n", spec[1], function()
+    trouble_cmd(spec[2])
+  end, { desc = spec[3] })
+end
 
 -- ============================================================================
--- Grug-far - Search and replace (lazy-loaded on command)
+-- Grug-far - Search and replace
 -- ============================================================================
 
-local grugfar_loaded = false
-local function ensure_grugfar()
-  if grugfar_loaded then
-    return
+local function grugfar(fn, ...)
+  if not package.loaded["grug-far"] then
+    add({ "https://github.com/MagicDuck/grug-far.nvim" })
+    require("grug-far").setup({ windowCreationCommand = "vsplit" })
   end
-  grugfar_loaded = true
-  add({ "https://github.com/MagicDuck/grug-far.nvim" })
-
-  require("grug-far").setup({
-    windowCreationCommand = "vsplit",
-  })
+  require("grug-far")[fn](...)
 end
 
 vim.keymap.set("n", "<M-S-s>", function()
-  ensure_grugfar()
-  require("grug-far").open()
-end, { desc = "Replace in files (grug-far)" })
+  grugfar("open")
+end, { desc = "Replace in files" })
 vim.keymap.set("n", "<M-S-w>", function()
-  ensure_grugfar()
-  require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
+  grugfar("open", { prefills = { search = vim.fn.expand("<cword>") } })
 end, { desc = "Replace current word" })
 vim.keymap.set("v", "<M-S-w>", function()
-  ensure_grugfar()
-  require("grug-far").with_visual_selection()
+  grugfar("with_visual_selection")
 end, { desc = "Replace selection" })
 vim.keymap.set("n", "<M-S-f>", function()
-  ensure_grugfar()
-  require("grug-far").open({ prefills = { paths = vim.fn.expand("%") } })
+  grugfar("open", { prefills = { paths = vim.fn.expand("%") } })
 end, { desc = "Replace in current file" })
-
--- ============================================================================
--- Quicker.nvim - Enhanced quickfix
--- ============================================================================
