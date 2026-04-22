@@ -356,15 +356,6 @@ later(function()
     end
     return "<S-Tab>"
   end, { expr = true, desc = "Prev tabstop" })
-  -- Esc: stop snippet session before entering Normal mode
-  vim.keymap.set("i", "<Esc>", function()
-    if MiniSnippets.session.get() then
-      vim.schedule(function()
-        MiniSnippets.session.stop()
-      end)
-    end
-    return "<Esc>"
-  end, { expr = true, desc = "Stop snippet session and exit Insert" })
   MiniKeymap.map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
   -- On <BS> just try to account for pairs
   MiniKeymap.map_multistep("i", "<BS>", { "minipairs_bs" })
