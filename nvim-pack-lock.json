@@ -53,7 +53,7 @@
       "src": "https://github.com/mfussenegger/nvim-dap"
     },
     "nvim-dap-view": {
-      "rev": "dd43736f30ed70571a02e8c560ab69746ad7a1ed",
+      "rev": "134c018903abc2c9b6fd5fc34c64d906db468c9f",
       "src": "https://github.com/igorlfs/nvim-dap-view"
     },
     "nvim-lspconfig": {
@@ -89,7 +89,7 @@
       "src": "https://github.com/kevinhwang91/promise-async"
     },
     "rustaceanvim": {
-      "rev": "f52d71ee7f01f04a820d83530388de8fab1bda05",
+      "rev": "231bbfbba864b09248264c9f28f1fd7c14cd216f",
       "src": "https://github.com/mrcjkb/rustaceanvim"
     },
     "toggleterm.nvim": {
