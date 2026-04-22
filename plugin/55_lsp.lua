@@ -92,8 +92,8 @@ end, {})
 
 on_event("InsertEnter", function()
   add({
-    "https://github.com/saghen/blink.cmp",
     "https://github.com/rafamadriz/friendly-snippets",
+    "https://github.com/saghen/blink.cmp",
   })
 
   require("blink.cmp").setup({
@@ -114,6 +114,9 @@ on_event("InsertEnter", function()
         },
       },
     },
-    fuzzy = { implementation = "lua" },
+    fuzzy = {
+      implementation = "prefer_rust",
+      prebuilt_binaries = { ignore_version_mismatch = true },
+    },
   })
 end)
