@@ -338,10 +338,33 @@ end)
 -- mini.keymap - Special key mappings for completion and pairs
 later(function()
   require("mini.keymap").setup()
-  -- Navigate completion menu with <Tab> / <S-Tab>
-  MiniKeymap.map_multistep("i", "<Tab>", { "pmenu_next" })
-  MiniKeymap.map_multistep("i", "<S-Tab>", { "pmenu_prev" })
-  -- On <CR> try to accept current completion item, fall back to pairs
+  -- Tab: accept completion item or jump snippet tabstop
+  vim.keymap.set("i", "<Tab>", function()
+    if vim.fn.pumvisible() == 1 then
+      return "<C-y>"
+    elseif MiniSnippets.session.get() then
+      MiniSnippets.session.jump("next")
+      return ""
+    end
+    return "<Tab>"
+  end, { expr = true, desc = "Accept completion or next tabstop" })
+  -- S-Tab: jump snippet tabstop prev (use C-n/C-p to cycle completion menu)
+  vim.keymap.set("i", "<S-Tab>", function()
+    if MiniSnippets.session.get() then
+      MiniSnippets.session.jump("prev")
+      return ""
+    end
+    return "<S-Tab>"
+  end, { expr = true, desc = "Prev tabstop" })
+  -- Esc: stop snippet session before entering Normal mode
+  vim.keymap.set("i", "<Esc>", function()
+    if MiniSnippets.session.get() then
+      vim.schedule(function()
+        MiniSnippets.session.stop()
+      end)
+    end
+    return "<Esc>"
+  end, { expr = true, desc = "Stop snippet session and exit Insert" })
   MiniKeymap.map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
   -- On <BS> just try to account for pairs
   MiniKeymap.map_multistep("i", "<BS>", { "minipairs_bs" })
