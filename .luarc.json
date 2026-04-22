@@ -13,7 +13,7 @@
     "MiniStatusline",
     "MiniKeymap",
     "MiniCompletion",
-        "MiniSnippets"
+    "MiniSnippets"
   ],
   "diagnostics.disable": [
     "unused-local",

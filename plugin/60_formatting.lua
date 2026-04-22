@@ -1,5 +1,5 @@
 -- ============================================================================
--- Formatting Configuration (plugin/65_formatting.lua)
+-- Formatting Configuration (plugin/60_formatting.lua)
 -- ============================================================================
 
 local add = vim.pack.add

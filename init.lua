@@ -17,10 +17,10 @@
 -- │   ├── 20_keymaps.lua          Custom key mappings
 -- │   ├── 30_mini.lua             Mini.nvim configuration (all mini plugins)
 -- │   ├── 40_treesitter.lua       Treesitter, UFO folding, guess-indent
--- │   ├── 55_lsp.lua              LSP & Completion (mini.completion)
--- │   ├── 65_formatting.lua       Code formatting (conform.nvim)
--- │   ├── 70_ui.lua               UI plugins (flash, trouble, grug-far)
--- │   └── 80_tools.lua            Tools (overseer, multicursor, toggleterm, etc.)
+-- │   ├── 50_lsp.lua              LSP & Completion (mini.completion)
+-- │   ├── 60_formatting.lua       Code formatting (conform.nvim)
+-- │   ├── 70_tools.lua            UI & Tools (flash, trouble, grug-far, overseer, multicursor, toggleterm, etc.)
+-- │   └── 80_test.lua             Test configuration
 -- ├── after/                      Files to override behavior added by plugins
 -- │   ├── ftplugin/               Filetype-specific settings (per-buffer/window)
 -- │   ├── lsp/                    Language server configurations

@@ -15,6 +15,7 @@ vim.g.mapleader = " "
 vim.opt.encoding = "utf-8"
 vim.opt.backup = false
 vim.opt.writebackup = false
+vim.opt.autoread = true
 vim.opt.updatetime = 300
 vim.opt.signcolumn = "yes"
 vim.opt.mouse = "a"
@@ -97,6 +98,19 @@ vim.cmd("filetype plugin indent on")
 if vim.fn.exists("syntax_on") ~= 1 then
   vim.cmd("syntax enable")
 end
+
+-- Auto-reload files changed outside Neovim
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+  command = "if mode() != 'c' | checktime | endif",
+  pattern = "*",
+})
+
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  pattern = "*",
+  callback = function()
+    vim.notify("File changed on disk; buffer reloaded", vim.log.levels.INFO)
+  end,
+})
 
 -- UI2 (Neovim 0.12+ experimental)
 local ok, ui2 = pcall(require, "vim._core.ui2")

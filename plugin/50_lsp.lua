@@ -1,5 +1,5 @@
 -- ============================================================================
--- LSP & Completion Configuration (plugin/55_lsp.lua)
+-- LSP & Completion Configuration (plugin/50_lsp.lua)
 -- ============================================================================
 
 local add = vim.pack.add
