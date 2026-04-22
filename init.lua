@@ -17,7 +17,7 @@
 -- │   ├── 20_keymaps.lua          Custom key mappings
 -- │   ├── 30_mini.lua             Mini.nvim configuration (all mini plugins)
 -- │   ├── 40_treesitter.lua       Treesitter, UFO folding, guess-indent
--- │   ├── 55_lsp.lua              LSP & Completion (blink.cmp)
+-- │   ├── 55_lsp.lua              LSP & Completion (mini.completion)
 -- │   ├── 65_formatting.lua       Code formatting (conform.nvim)
 -- │   ├── 70_ui.lua               UI plugins (flash, trouble, grug-far)
 -- │   └── 80_tools.lua            Tools (overseer, multicursor, toggleterm, etc.)

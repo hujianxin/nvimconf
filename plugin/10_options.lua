@@ -88,8 +88,8 @@ vim.opt.undofile = true
 vim.opt.timeout = true
 vim.opt.timeoutlen = 300
 
--- Misc
-vim.opt.wildignorecase = true
+-- Completion menu: preselect first item so Enter accepts it
+vim.opt.completeopt = "menu,menuone,noinsert"
 vim.opt.cursorline = true
 
 -- Enable filetype plugins and syntax

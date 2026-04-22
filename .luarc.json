@@ -10,7 +10,9 @@
     "MiniSessions",
     "MiniVisits",
     "MiniMisc",
-    "MiniStatusline"
+    "MiniStatusline",
+    "MiniKeymap",
+    "MiniCompletion"
   ],
   "diagnostics.disable": [
     "unused-local",

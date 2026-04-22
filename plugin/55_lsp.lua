@@ -3,7 +3,7 @@
 -- ============================================================================
 
 local add = vim.pack.add
-local now_if_args, later, on_event = Config.now_if_args, Config.later, Config.on_event
+local now_if_args, later = Config.now_if_args, Config.later
 
 -- ============================================================================
 -- LSP Setup
@@ -25,10 +25,10 @@ now_if_args(function()
     },
   })
 
-  -- Wait for blink.cmp to be available for capabilities
+  -- Use mini.completion for LSP capabilities
   later(function()
-    local ok, blink = pcall(require, "blink.cmp")
-    local capabilities = ok and blink.get_lsp_capabilities() or vim.lsp.protocol.make_client_capabilities()
+    local ok, mini_completion = pcall(require, "mini.completion")
+    local capabilities = ok and MiniCompletion.get_lsp_capabilities() or vim.lsp.protocol.make_client_capabilities()
     capabilities.textDocument.foldingRange = {
       dynamicRegistration = false,
       lineFoldingOnly = true,
@@ -85,38 +85,3 @@ end)
 vim.api.nvim_create_user_command("OR", function()
   vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } } })
 end, {})
-
--- ============================================================================
--- blink.cmp - Completion (loaded lazily on InsertEnter)
--- ============================================================================
-
-on_event("InsertEnter", function()
-  add({
-    "https://github.com/rafamadriz/friendly-snippets",
-    "https://github.com/saghen/blink.cmp",
-  })
-
-  require("blink.cmp").setup({
-    keymap = {
-      preset = "default",
-      ["<CR>"] = { "accept", "fallback" },
-      ["<Tab>"] = { "accept", "fallback" },
-    },
-    appearance = { nerd_font_variant = "mono" },
-    signature = { enabled = true },
-    sources = {
-      default = { "lsp", "path", "snippets", "buffer" },
-      providers = {
-        snippets = {
-          opts = {
-            search_paths = { vim.fn.stdpath("config") .. "/snippets" },
-          },
-        },
-      },
-    },
-    fuzzy = {
-      implementation = "prefer_rust",
-      prebuilt_binaries = { ignore_version_mismatch = true },
-    },
-  })
-end)

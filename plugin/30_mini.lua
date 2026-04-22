@@ -3,6 +3,7 @@
 -- ============================================================================
 -- All mini plugins organized with MiniMax staged loading strategy
 
+local add = vim.pack.add
 local now, now_if_args, later = Config.now, Config.now_if_args, Config.later
 
 -- ============================================================================
@@ -47,6 +48,8 @@ now(function()
     require("mini.icons").mock_nvim_web_devicons()
     return package.loaded["nvim-web-devicons"]
   end
+  -- Add LSP kind icons for mini.completion
+  later(MiniIcons.tweak_lsp_kind)
 end)
 
 -- mini.notify - Notification manager
@@ -244,6 +247,27 @@ now_if_args(function()
   MiniMisc.setup_termbg_sync()
 end)
 
+-- mini.completion - Completion and signature help
+now_if_args(function()
+  local process_items_opts = { kind_priority = { Text = -1, Snippet = 99 } }
+  local process_items = function(items, base)
+    return MiniCompletion.default_process_items(items, base, process_items_opts)
+  end
+  require("mini.completion").setup({
+    lsp_completion = {
+      source_func = "omnifunc",
+      auto_setup = false,
+      process_items = process_items,
+    },
+  })
+
+  -- Set 'omnifunc' for LSP completion only when needed
+  local on_attach = function(ev)
+    vim.bo[ev.buf].omnifunc = "v:lua.MiniCompletion.completefunc_lsp"
+  end
+  Config.new_autocmd("LspAttach", nil, on_attach, "Set 'omnifunc'")
+end)
+
 -- ============================================================================
 -- Step Two (later) - Delayed loaded after first screen
 -- ============================================================================
@@ -295,6 +319,32 @@ later(function()
   vim.keymap.set("n", "<leader>E", function()
     MiniExtra.pickers.explorer()
   end, { desc = "File explorer" })
+end)
+
+-- mini.snippets - Snippet management
+later(function()
+  add({ "https://github.com/rafamadriz/friendly-snippets" })
+  local snippets = require("mini.snippets")
+  local config_path = vim.fn.stdpath("config")
+  snippets.setup({
+    snippets = {
+      snippets.gen_loader.from_file(config_path .. "/snippets/global.json"),
+      snippets.gen_loader.from_lang(),
+    },
+  })
+  MiniSnippets.start_lsp_server()
+end)
+
+-- mini.keymap - Special key mappings for completion and pairs
+later(function()
+  require("mini.keymap").setup()
+  -- Navigate completion menu with <Tab> / <S-Tab>
+  MiniKeymap.map_multistep("i", "<Tab>", { "pmenu_next" })
+  MiniKeymap.map_multistep("i", "<S-Tab>", { "pmenu_prev" })
+  -- On <CR> try to accept current completion item, fall back to pairs
+  MiniKeymap.map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
+  -- On <BS> just try to account for pairs
+  MiniKeymap.map_multistep("i", "<BS>", { "minipairs_bs" })
 end)
 
 -- mini.ai - Extend and create text objects
