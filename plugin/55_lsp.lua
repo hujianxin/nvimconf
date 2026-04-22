@@ -3,7 +3,7 @@
 -- ============================================================================
 
 local add = vim.pack.add
-local now_if_args, later = Config.now_if_args, Config.later
+local now_if_args = Config.now_if_args
 
 -- ============================================================================
 -- LSP Setup
@@ -26,62 +26,42 @@ now_if_args(function()
   })
 
   -- Use mini.completion for LSP capabilities
-  later(function()
-    local ok, mini_completion = pcall(require, "mini.completion")
-    local capabilities = ok and MiniCompletion.get_lsp_capabilities() or vim.lsp.protocol.make_client_capabilities()
-    capabilities.textDocument.foldingRange = {
-      dynamicRegistration = false,
-      lineFoldingOnly = true,
-    }
+  local ok, _ = pcall(require, "mini.completion")
+  local capabilities = ok and MiniCompletion.get_lsp_capabilities() or vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.foldingRange = { dynamicRegistration = false, lineFoldingOnly = true }
 
-    vim.lsp.config("*", { capabilities = capabilities })
-
-    -- Enable LSP servers
-    vim.lsp.enable({ "ty", "gopls", "rust_analyzer", "jsonls", "yamlls", "protols", "lua_ls", "zls" })
-  end)
-
-  -- Disable default LSP keymaps
-  local default_keymaps = { "grn", "gra", "grr", "gri", "grt", "grx" }
-  for _, key in ipairs(default_keymaps) do
-    pcall(vim.keymap.del, "n", key)
-  end
+  vim.lsp.config("*", { capabilities = capabilities })
+  vim.lsp.enable({ "ty", "gopls", "rust_analyzer", "jsonls", "yamlls", "protols", "lua_ls", "zls" })
 
   -- LSP global mappings
   vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic float", silent = true })
   vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostic loclist", silent = true })
 
   -- LSP buffer local mappings
+  local default_keymaps = { "grn", "gra", "grr", "gri", "grt", "grx" }
   Config.new_autocmd("LspAttach", "*", function(args)
-    local opts = { buffer = args.buf }
+    local bo = { buffer = args.buf, silent = true }
 
     for _, key in ipairs(default_keymaps) do
       pcall(vim.keymap.del, "n", key, { buffer = args.buf })
     end
 
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Show hover", silent = true }))
-    vim.keymap.set(
-      "n",
-      "<leader>r",
-      vim.lsp.buf.rename,
-      vim.tbl_extend("force", opts, { desc = "Rename", silent = true })
-    )
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", bo, { desc = "Show hover" }))
+    vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, vim.tbl_extend("force", bo, { desc = "Rename" }))
     vim.keymap.set(
       "n",
       "<leader>k",
       vim.diagnostic.open_float,
-      vim.tbl_extend("force", opts, { desc = "Show diagnostics", silent = true })
+      vim.tbl_extend("force", bo, { desc = "Show diagnostics" })
     )
-    vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { silent = true, desc = "Code actions" })
+    vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, vim.tbl_extend("force", bo, { desc = "Code actions" }))
     vim.keymap.set({ "n", "x" }, "<leader>i", function()
       vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } } })
-    end, vim.tbl_extend("force", opts, { desc = "Organize imports", silent = true }))
+    end, vim.tbl_extend("force", bo, { desc = "Organize imports" }))
   end, "LSP buffer local mappings")
 end)
 
--- ============================================================================
 -- Organize imports command
--- ============================================================================
-
 vim.api.nvim_create_user_command("OR", function()
   vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } } })
-end, {})
+end, { desc = "Organize imports" })
