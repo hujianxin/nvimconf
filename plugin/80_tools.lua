@@ -3,90 +3,81 @@
 -- ============================================================================
 
 local add = vim.pack.add
-local later, on_event, on_filetype = Config.later, Config.on_event, Config.on_filetype
+local later, on_filetype = Config.later, Config.on_filetype
 
 -- ============================================================================
--- Overseer - Task runner (lazy-loaded on command)
+-- Overseer - Task runner
 -- ============================================================================
 
-local overseer_loaded = false
-local function ensure_overseer()
-  if overseer_loaded then
-    return
-  end
-  overseer_loaded = true
-  add({ "https://github.com/stevearc/overseer.nvim" })
-
-  require("overseer").setup({
-    log_level = vim.log.levels.TRACE,
-    component_aliases = {
-      default = {
-        "on_exit_set_status",
-        -- { "on_output_quickfix", open = false },
-        { "on_complete_notify", system = "unfocused" },
-        { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
+local function overseer(cmd)
+  if not package.loaded["overseer"] then
+    add({ "https://github.com/stevearc/overseer.nvim" })
+    require("overseer").setup({
+      log_level = vim.log.levels.TRACE,
+      component_aliases = {
+        default = {
+          "on_exit_set_status",
+          { "on_complete_notify", system = "unfocused" },
+          { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
+        },
       },
-    },
-  })
-
-  -- Commands
-  vim.cmd.cnoreabbrev("OS OverseerShell")
+    })
+    vim.cmd.cnoreabbrev("OS OverseerShell")
+  end
+  if type(cmd) == "function" then
+    cmd()
+  else
+    vim.cmd(cmd)
+  end
 end
 
--- Keymaps (trigger lazy loading)
-vim.keymap.set("n", "<leader>Ot", function()
-  ensure_overseer()
-  vim.cmd("OverseerToggle!")
-end, { desc = "Toggle" })
-vim.keymap.set("n", "<leader>Or", function()
-  ensure_overseer()
-  vim.cmd("OverseerRun")
-end, { desc = "Run" })
+for _, spec in ipairs({
+  { "<leader>Ot", "OverseerToggle!", "Toggle" },
+  { "<leader>Or", "OverseerRun", "Run" },
+  { "<leader>Os", "OverseerShell", "Shell" },
+  { "<leader>OT", "OverseerTaskAction", "Task action" },
+}) do
+  vim.keymap.set("n", spec[1], function()
+    overseer(spec[2])
+  end, { desc = spec[3] })
+end
+
 vim.keymap.set("n", "<leader>OR", function()
-  ensure_overseer()
-  local tasks = require("overseer").list_tasks({ recent = true })
-  if #tasks > 0 then
-    tasks[1]:restart()
-  else
-    vim.notify("No recent task to rerun", vim.log.levels.WARN)
-  end
+  overseer(function()
+    local tasks = require("overseer").list_tasks({ recent = true })
+    if #tasks > 0 then
+      tasks[1]:restart()
+    else
+      vim.notify("No recent task", vim.log.levels.WARN)
+    end
+  end)
 end, { desc = "Rerun last" })
-vim.keymap.set("n", "<leader>Os", function()
-  ensure_overseer()
-  vim.cmd("OverseerShell")
-end, { desc = "Shell" })
-vim.keymap.set("n", "<leader>OT", function()
-  ensure_overseer()
-  vim.cmd("OverseerTaskAction")
-end, { desc = "Task action" })
+
 vim.keymap.set("n", "<leader>Od", function()
-  ensure_overseer()
-  local overseer = require("overseer")
-  local tasks =
-    overseer.list_tasks({ sort = require("overseer.task_list").sort_finished_recently, include_ephemeral = true })
-  if vim.tbl_isempty(tasks) then
-    vim.notify("No tasks found", vim.log.levels.WARN)
-  else
-    overseer.run_action(tasks[1])
-  end
+  overseer(function()
+    local o = require("overseer")
+    local tasks =
+      o.list_tasks({ sort = require("overseer.task_list").sort_finished_recently, include_ephemeral = true })
+    if vim.tbl_isempty(tasks) then
+      vim.notify("No tasks", vim.log.levels.WARN)
+    else
+      o.run_action(tasks[1])
+    end
+  end)
 end, { desc = "Do quick action" })
 
 vim.api.nvim_create_user_command("Make", function(params)
-  ensure_overseer()
   local cmd, num_subs = vim.o.makeprg:gsub("%$%*", params.args)
   if num_subs == 0 then
     cmd = cmd .. " " .. params.args
   end
-  local task = require("overseer").new_task({
-    cmd = vim.fn.expandcmd(cmd),
-    components = {
-      { "on_output_quickfix", open = not params.bang, open_height = 8 },
-      "unique",
-      "default",
-    },
-  })
-  task:start()
-end, { desc = "Run your makeprg as an Overseer task", nargs = "*", bang = true })
+  require("overseer")
+    .new_task({
+      cmd = vim.fn.expandcmd(cmd),
+      components = { { "on_output_quickfix", open = not params.bang, open_height = 8 }, "unique", "default" },
+    })
+    :start()
+end, { desc = "Run makeprg as Overseer task", nargs = "*", bang = true })
 
 -- ============================================================================
 -- Multicursor
@@ -94,38 +85,68 @@ end, { desc = "Run your makeprg as an Overseer task", nargs = "*", bang = true }
 
 later(function()
   add({ "https://github.com/jake-stewart/multicursor.nvim" })
-
   local mc = require("multicursor-nvim")
   mc.setup()
 
-  local set = vim.keymap.set
-  set({ "n", "x" }, "<C-up>", function()
-    mc.lineAddCursor(-1)
-  end)
-  set({ "n", "x" }, "<C-down>", function()
-    mc.lineAddCursor(1)
-  end)
-  set({ "n", "x" }, "<C-n>", function()
-    mc.matchAddCursor(1)
-  end)
-  set({ "n", "x" }, "<C-s>", function()
-    mc.matchSkipCursor(1)
-  end)
-  set({ "n", "x" }, "<C-S-n>", function()
-    mc.matchAddCursor(-1)
-  end)
-  set({ "n", "x" }, "<C-S-s>", function()
-    mc.matchSkipCursor(-1)
-  end)
-  set("n", "<c-leftmouse>", mc.handleMouse)
-  set("n", "<c-leftdrag>", mc.handleMouseDrag)
-  set("n", "<c-leftrelease>", mc.handleMouseRelease)
-  set({ "n", "x" }, "<c-q>", mc.toggleCursor)
+  for _, spec in ipairs({
+    {
+      { "n", "x" },
+      "<C-up>",
+      function()
+        mc.lineAddCursor(-1)
+      end,
+    },
+    {
+      { "n", "x" },
+      "<C-down>",
+      function()
+        mc.lineAddCursor(1)
+      end,
+    },
+    {
+      { "n", "x" },
+      "<C-n>",
+      function()
+        mc.matchAddCursor(1)
+      end,
+    },
+    {
+      { "n", "x" },
+      "<C-s>",
+      function()
+        mc.matchSkipCursor(1)
+      end,
+    },
+    {
+      { "n", "x" },
+      "<C-S-n>",
+      function()
+        mc.matchAddCursor(-1)
+      end,
+    },
+    {
+      { "n", "x" },
+      "<C-S-s>",
+      function()
+        mc.matchSkipCursor(-1)
+      end,
+    },
+    { "n", "<c-leftmouse>", mc.handleMouse },
+    { "n", "<c-leftdrag>", mc.handleMouseDrag },
+    { "n", "<c-leftrelease>", mc.handleMouseRelease },
+    { { "n", "x" }, "<c-q>", mc.toggleCursor },
+  }) do
+    vim.keymap.set(spec[1], spec[2], spec[3])
+  end
 
   mc.addKeymapLayer(function(layerSet)
-    layerSet({ "n", "x" }, "<left>", mc.prevCursor)
-    layerSet({ "n", "x" }, "<right>", mc.nextCursor)
-    layerSet({ "n", "x" }, "<M-x>", mc.deleteCursor)
+    for _, spec in ipairs({
+      { { "n", "x" }, "<left>", mc.prevCursor },
+      { { "n", "x" }, "<right>", mc.nextCursor },
+      { { "n", "x" }, "<M-x>", mc.deleteCursor },
+    }) do
+      layerSet(spec[1], spec[2], spec[3])
+    end
     layerSet("n", "<esc>", function()
       if not mc.cursorsEnabled() then
         mc.enableCursors()
@@ -135,28 +156,26 @@ later(function()
     end)
   end)
 
-  -- Highlights
-  local hl = vim.api.nvim_set_hl
-  hl(0, "MultiCursorCursor", { reverse = true })
-  hl(0, "MultiCursorVisual", { link = "Visual" })
-  hl(0, "MultiCursorSign", { link = "SignColumn" })
-  hl(0, "MultiCursorMatchPreview", { link = "Search" })
-  hl(0, "MultiCursorDisabledCursor", { reverse = true })
-  hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
-  hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
+  for _, spec in ipairs({
+    { "MultiCursorCursor", { reverse = true } },
+    { "MultiCursorVisual", { link = "Visual" } },
+    { "MultiCursorSign", { link = "SignColumn" } },
+    { "MultiCursorMatchPreview", { link = "Search" } },
+    { "MultiCursorDisabledCursor", { reverse = true } },
+    { "MultiCursorDisabledVisual", { link = "Visual" } },
+    { "MultiCursorDisabledSign", { link = "SignColumn" } },
+  }) do
+    vim.api.nvim_set_hl(0, spec[1], spec[2])
+  end
 end)
 
 -- ============================================================================
 -- ToggleTerm - Terminal
 -- ============================================================================
 
--- ToggleTerm keymaps (defined globally)
 later(function()
-  -- Store last used terminal number (1 by default)
   local last_term_num = 1
-
-  -- Helper to ensure toggleterm is loaded
-  local ensure_toggleterm = function()
+  local function ensure_toggleterm()
     if not package.loaded["toggleterm"] then
       add({ "https://github.com/akinsho/toggleterm.nvim" })
       require("toggleterm").setup({
@@ -180,20 +199,13 @@ later(function()
 
   vim.keymap.set({ "n", "i", "t" }, "<d-j>", function()
     ensure_toggleterm()
-    local count = vim.v.count1
-    local target_term
+    local target = vim.v.count > 0 and vim.v.count or last_term_num
     if vim.v.count > 0 then
-      -- If count provided, use it and remember as last used
-      target_term = count
-      last_term_num = target_term
-    else
-      -- No count: toggle the last used terminal
-      target_term = last_term_num
+      last_term_num = target
     end
-    vim.cmd.execute("'" .. target_term .. "ToggleTerm direction=horizontal'")
+    vim.cmd.execute("'" .. target .. "ToggleTerm direction=horizontal'")
   end, { desc = "Toggle terminal" })
 
-  -- Exit terminal mode
   vim.keymap.set("t", "<esc><esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
 end)
 
@@ -201,33 +213,19 @@ end)
 -- Auto-save
 -- ============================================================================
 
-on_event({ "InsertLeave", "TextChanged" }, function()
-  if package.loaded["auto-save"] then
-    return
-  end
-
+Config.new_autocmd({ "InsertLeave", "TextChanged" }, "*", function()
   add({ "https://github.com/okuuva/auto-save.nvim" })
   require("auto-save").setup()
-end)
+end, "Setup auto-save", { once = true })
 
 -- ============================================================================
--- LazyGit (lazy-loaded on command)
+-- LazyGit
 -- ============================================================================
-
-local lazygit_loaded = false
-local function ensure_lazygit()
-  if lazygit_loaded then
-    return
-  end
-  lazygit_loaded = true
-  add({
-    "https://github.com/kdheepak/lazygit.nvim",
-    "https://github.com/nvim-lua/plenary.nvim",
-  })
-end
 
 vim.keymap.set("n", "<c-g>", function()
-  ensure_lazygit()
+  if not package.loaded["lazygit"] then
+    add({ "https://github.com/kdheepak/lazygit.nvim", "https://github.com/nvim-lua/plenary.nvim" })
+  end
   vim.cmd("LazyGit")
 end, { desc = "LazyGit" })
 
@@ -237,70 +235,60 @@ end, { desc = "LazyGit" })
 
 on_filetype({ "http", "rest" }, function()
   add({ "https://github.com/mistweaverco/kulala.nvim" })
-  require("kulala").setup({
-    global_keymaps = true,
-    global_keymaps_prefix = "<leader>K",
-    kulala_keymaps_prefix = "",
-  })
+  require("kulala").setup({ global_keymaps = true, global_keymaps_prefix = "<leader>K", kulala_keymaps_prefix = "" })
 end)
 
 -- ============================================================================
--- CodeDiff - VSCode-style diff viewer (lazy-loaded on command)
+-- CodeDiff - VSCode-style diff viewer
 -- ============================================================================
 
-local function setup_codediff()
-  add({ "https://github.com/esmuellert/codediff.nvim" })
-
-  require("codediff").setup({
-    -- Diff view behavior
-    diff = {
-      layout = "side-by-side",
-      disable_inlay_hints = true,
-      max_computation_time_ms = 5000,
-      ignore_trim_whitespace = false,
-      jump_to_first_change = true,
-      highlight_priority = 100,
-      compute_moves = false,
-    },
-    -- Explorer panel configuration
-    explorer = {
-      position = "left",
-      width = 40,
-      indent_markers = true,
-      initial_focus = "explorer",
-      view_mode = "list",
-      flatten_dirs = true,
-      file_filter = {
-        ignore = { ".git/**", ".jj/**", "node_modules/**", "target/**", "dist/**" },
+local function ensure_codediff()
+  if not package.loaded["codediff"] then
+    add({ "https://github.com/esmuellert/codediff.nvim" })
+    require("codediff").setup({
+      diff = {
+        layout = "side-by-side",
+        disable_inlay_hints = true,
+        max_computation_time_ms = 5000,
+        ignore_trim_whitespace = false,
+        jump_to_first_change = true,
+        highlight_priority = 100,
+        compute_moves = false,
       },
-      focus_on_select = false,
-      visible_groups = {
-        staged = true,
-        unstaged = true,
-        conflicts = true,
+      explorer = {
+        position = "left",
+        width = 40,
+        indent_markers = true,
+        initial_focus = "explorer",
+        view_mode = "list",
+        flatten_dirs = true,
+        file_filter = { ignore = { ".git/**", ".jj/**", "node_modules/**", "target/**", "dist/**" } },
+        focus_on_select = false,
+        visible_groups = { staged = true, unstaged = true, conflicts = true },
       },
-    },
-  })
+    })
+  end
 end
 
--- Lazy-loaded commands
 vim.api.nvim_create_user_command("CodeDiff", function(params)
-  setup_codediff()
-  -- Re-run the command after setup
+  ensure_codediff()
   vim.cmd("CodeDiff " .. params.args)
 end, { nargs = "*", complete = "file", desc = "CodeDiff explorer" })
 
 vim.api.nvim_create_user_command("CodeDiffHead", function()
-  setup_codediff()
+  ensure_codediff()
   vim.cmd("CodeDiff HEAD")
 end, { desc = "CodeDiff with HEAD" })
 
 vim.api.nvim_create_user_command("CodeDiffHistory", function()
-  setup_codediff()
+  ensure_codediff()
   vim.cmd("CodeDiff history")
 end, { desc = "CodeDiff history" })
 
--- Keymaps (trigger lazy loading)
-vim.keymap.set("n", "<leader>Cd", ":CodeDiff<CR>", { desc = "CodeDiff files" })
-vim.keymap.set("n", "<leader>Ch", ":CodeDiffHistory<CR>", { desc = "CodeDiff history" })
-vim.keymap.set("n", "<leader>CH", ":CodeDiffHead<CR>", { desc = "CodeDiff with HEAD" })
+for _, spec in ipairs({
+  { "<leader>Cd", "CodeDiff", "CodeDiff files" },
+  { "<leader>Ch", "CodeDiffHistory", "CodeDiff history" },
+  { "<leader>CH", "CodeDiffHead", "CodeDiff with HEAD" },
+}) do
+  vim.keymap.set("n", spec[1], ":" .. spec[2] .. "<CR>", { desc = spec[3] })
+end
