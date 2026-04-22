@@ -4,50 +4,39 @@
 
 local add = vim.pack.add
 
-local test_loaded = false
-local function ensure_test()
-  if test_loaded then
-    return
+local function test_cmd(cmd)
+  if not package.loaded["test"] then
+    add({
+      "https://github.com/tpope/vim-dispatch",
+      "https://github.com/vim-test/vim-test",
+    })
+    vim.g["test#strategy"] = "neovim_sticky"
+    vim.g["test#preserve_screen"] = 0
+    vim.g["test#neovim_sticky#kill_previous"] = 1
+    vim.g["test#neovim_sticky#reopen_window"] = 1
   end
-  test_loaded = true
-  add({
-    "https://github.com/tpope/vim-dispatch",
-    "https://github.com/vim-test/vim-test",
-  })
-  vim.g["test#strategy"] = "neovim_sticky"
-  vim.g["test#preserve_screen"] = 0
-  vim.g["test#neovim_sticky#kill_previous"] = 1
-  vim.g["test#neovim_sticky#reopen_window"] = 1
+  vim.cmd(cmd)
 end
 
-vim.api.nvim_create_user_command("TestNearest", function()
-  ensure_test()
-  vim.cmd("TestNearest")
-end, { desc = "Run nearest test" })
+for _, spec in ipairs({
+  { "TestNearest", "Run nearest test" },
+  { "TestFile", "Run test file" },
+  { "TestSuite", "Run test suite" },
+  { "TestLast", "Run last test" },
+  { "TestVisit", "Visit last test" },
+}) do
+  vim.api.nvim_create_user_command(spec[1], function()
+    test_cmd(spec[1])
+  end, { desc = spec[2] })
+end
 
-vim.api.nvim_create_user_command("TestFile", function()
-  ensure_test()
-  vim.cmd("TestFile")
-end, { desc = "Run test file" })
-
-vim.api.nvim_create_user_command("TestSuite", function()
-  ensure_test()
-  vim.cmd("TestSuite")
-end, { desc = "Run test suite" })
-
-vim.api.nvim_create_user_command("TestLast", function()
-  ensure_test()
-  vim.cmd("TestLast")
-end, { desc = "Run last test" })
-
-vim.api.nvim_create_user_command("TestVisit", function()
-  ensure_test()
-  vim.cmd("TestVisit")
-end, { desc = "Visit last test" })
-
-vim.keymap.set("n", "<leader>tn", ":TestNearest<CR>", { desc = "Test nearest" })
-vim.keymap.set("n", "<leader>tt", ":TestNearest<CR>", { desc = "Test nearest" })
-vim.keymap.set("n", "<leader>tf", ":TestFile<CR>", { desc = "Test file" })
-vim.keymap.set("n", "<leader>ts", ":TestSuite<CR>", { desc = "Test suite" })
-vim.keymap.set("n", "<leader>tl", ":TestLast<CR>", { desc = "Test last" })
-vim.keymap.set("n", "<leader>tv", ":TestVisit<CR>", { desc = "Test visit" })
+for _, spec in ipairs({
+  { "<leader>tn", "TestNearest", "Test nearest" },
+  { "<leader>tt", "TestNearest", "Test nearest" },
+  { "<leader>tf", "TestFile", "Test file" },
+  { "<leader>ts", "TestSuite", "Test suite" },
+  { "<leader>tl", "TestLast", "Test last" },
+  { "<leader>tv", "TestVisit", "Test visit" },
+}) do
+  vim.keymap.set("n", spec[1], ":" .. spec[2] .. "<CR>", { desc = spec[3] })
+end
