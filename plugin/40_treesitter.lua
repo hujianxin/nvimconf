@@ -33,8 +33,9 @@ now_if_args(function()
     "zig",
   }
 
+  local installed_parsers = require("nvim-treesitter.config").get_installed("parsers")
   local isnt_installed = function(lang)
-    return #vim.api.nvim_get_runtime_file("parser/" .. lang .. ".*", false) == 0
+    return not vim.tbl_contains(installed_parsers, lang)
   end
 
   local to_install = vim.tbl_filter(isnt_installed, languages)
