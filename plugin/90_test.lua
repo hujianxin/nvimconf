@@ -10,7 +10,10 @@ local function ensure_test()
     return
   end
   test_loaded = true
-  add({ "https://github.com/vim-test/vim-test" })
+  add({
+    "https://github.com/tpope/vim-dispatch",
+    "https://github.com/vim-test/vim-test",
+  })
   vim.g["test#strategy"] = "neovim_sticky"
   vim.g["test#preserve_screen"] = 0
   vim.g["test#neovim_sticky#kill_previous"] = 1
