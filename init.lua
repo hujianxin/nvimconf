@@ -48,7 +48,7 @@ _G.Config = {}
 -- ============================================================================
 
 -- Add mini.nvim first as it's used by many things
-vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
+vim.pack.add({ 'https://github.com/nvim-mini/mini.nvim' })
 
 -- ============================================================================
 -- Loading Helpers from mini.misc
@@ -62,33 +62,33 @@ vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
 --
 -- See: https://github.com/nvim-mini/mini.misc
 
-local misc = require("mini.misc")
+local misc = require('mini.misc')
 
 Config.now = function(f)
-  misc.safely("now", f)
+  misc.safely('now', f)
 end
 Config.later = function(f)
-  misc.safely("later", f)
+  misc.safely('later', f)
 end
 Config.now_if_args = vim.fn.argc(-1) > 0 and Config.now or Config.later
 Config.on_event = function(ev, f)
-  local ev_name = type(ev) == "table" and table.concat(ev, ",") or ev
-  misc.safely("event:" .. ev_name, f)
+  local ev_name = type(ev) == 'table' and table.concat(ev, ',') or ev
+  misc.safely('event:' .. ev_name, f)
 end
 Config.on_filetype = function(ft, f)
-  local ft_name = type(ft) == "table" and table.concat(ft, ",") or ft
-  misc.safely("filetype:" .. ft_name, f)
+  local ft_name = type(ft) == 'table' and table.concat(ft, ',') or ft
+  misc.safely('filetype:' .. ft_name, f)
 end
 
 -- ============================================================================
 -- Helper for creating autocommands
 -- ============================================================================
 
-local gr = vim.api.nvim_create_augroup("custom-config", {})
+local gr = vim.api.nvim_create_augroup('custom-config', {})
 Config.new_autocmd = function(event, pattern, callback, desc, opts_extra)
   local opts = { group = gr, pattern = pattern, callback = callback, desc = desc }
   if opts_extra then
-    opts = vim.tbl_extend("force", opts, opts_extra)
+    opts = vim.tbl_extend('force', opts, opts_extra)
   end
   vim.api.nvim_create_autocmd(event, opts)
 end
@@ -108,5 +108,5 @@ Config.on_packchanged = function(plugin_name, kinds, callback, desc)
     end
     callback(ev.data)
   end
-  Config.new_autocmd("PackChanged", "*", f, desc)
+  Config.new_autocmd('PackChanged', '*', f, desc)
 end

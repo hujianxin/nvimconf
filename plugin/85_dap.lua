@@ -8,35 +8,35 @@
 local add = vim.pack.add
 
 local function ensure_dap()
-  if package.loaded["dap"] then
+  if package.loaded['dap'] then
     return
   end
   add({
-    "https://github.com/mfussenegger/nvim-dap",
-    "https://github.com/igorlfs/nvim-dap-view",
-    "https://github.com/nvim-neotest/nvim-nio",
+    'https://github.com/mfussenegger/nvim-dap',
+    'https://github.com/igorlfs/nvim-dap-view',
+    'https://github.com/nvim-neotest/nvim-nio',
   })
 
-  local dap = require("dap")
-  local dapview = require("dap-view")
+  local dap = require('dap')
+  local dapview = require('dap-view')
   dapview.setup({ winbar = { controls = { enabled = true } } })
 
-  dap.listeners.after.event_initialized["dap-view"] = function()
+  dap.listeners.after.event_initialized['dap-view'] = function()
     dapview.open()
   end
-  dap.listeners.after.event_terminated["dap-view"] = function()
+  dap.listeners.after.event_terminated['dap-view'] = function()
     dapview.close()
   end
-  dap.listeners.after.event_exited["dap-view"] = function()
+  dap.listeners.after.event_exited['dap-view'] = function()
     dapview.close()
   end
 
   for _, spec in ipairs({
-    { "DapBreakpoint", "●" },
-    { "DapBreakpointCondition", "◆" },
-    { "DapBreakpointRejected", "✗" },
-    { "DapLogPoint", "◆" },
-    { "DapStopped", "→", "DapStoppedLine" },
+    { 'DapBreakpoint', '●' },
+    { 'DapBreakpointCondition', '◆' },
+    { 'DapBreakpointRejected', '✗' },
+    { 'DapLogPoint', '◆' },
+    { 'DapStopped', '→', 'DapStoppedLine' },
   }) do
     local opts = { text = spec[2], texthl = spec[1] }
     if spec[3] then
@@ -46,30 +46,30 @@ local function ensure_dap()
   end
 
   dap.adapters.delve = {
-    type = "server",
-    port = "${port}",
-    executable = { command = "dlv", args = { "dap", "-l", "127.0.0.1:${port}" } },
+    type = 'server',
+    port = '${port}',
+    executable = { command = 'dlv', args = { 'dap', '-l', '127.0.0.1:${port}' } },
   }
   dap.configurations.go = {
-    { name = "Debug", type = "delve", request = "launch", program = "${file}" },
-    { name = "Debug test", type = "delve", request = "launch", mode = "test", program = "${file}" },
+    { name = 'Debug', type = 'delve', request = 'launch', program = '${file}' },
+    { name = 'Debug test', type = 'delve', request = 'launch', mode = 'test', program = '${file}' },
   }
 
   dap.adapters.codelldb = {
-    type = "server",
-    port = "${port}",
-    executable = { command = "codelldb", args = { "--port", "${port}" } },
+    type = 'server',
+    port = '${port}',
+    executable = { command = 'codelldb', args = { '--port', '${port}' } },
   }
-  for _, ft in ipairs({ "rust", "zig", "c", "cpp" }) do
+  for _, ft in ipairs({ 'rust', 'zig', 'c', 'cpp' }) do
     dap.configurations[ft] = {
       {
-        name = "Debug",
-        type = "codelldb",
-        request = "launch",
+        name = 'Debug',
+        type = 'codelldb',
+        request = 'launch',
         program = function()
-          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
         end,
-        cwd = "${workspaceFolder}",
+        cwd = '${workspaceFolder}',
         stopOnEntry = false,
       },
     }
@@ -78,86 +78,86 @@ end
 
 for _, spec in ipairs({
   {
-    "<leader>Db",
+    '<leader>Db',
     function()
-      require("dap").toggle_breakpoint()
+      require('dap').toggle_breakpoint()
     end,
-    "Toggle breakpoint",
+    'Toggle breakpoint',
   },
   {
-    "<leader>DB",
+    '<leader>DB',
     function()
-      require("dap").set_breakpoint(vim.fn.input("Condition: "))
+      require('dap').set_breakpoint(vim.fn.input('Condition: '))
     end,
-    "Conditional breakpoint",
+    'Conditional breakpoint',
   },
   {
-    "<leader>Dc",
+    '<leader>Dc',
     function()
-      require("dap").continue()
+      require('dap').continue()
     end,
-    "Continue/start",
+    'Continue/start',
   },
   {
-    "<leader>DC",
+    '<leader>DC',
     function()
-      require("dap").run_to_cursor()
+      require('dap').run_to_cursor()
     end,
-    "Run to cursor",
+    'Run to cursor',
   },
   {
-    "<leader>Ds",
+    '<leader>Ds',
     function()
-      require("dap").step_over()
+      require('dap').step_over()
     end,
-    "Step over",
+    'Step over',
   },
   {
-    "<leader>Di",
+    '<leader>Di',
     function()
-      require("dap").step_into()
+      require('dap').step_into()
     end,
-    "Step into",
+    'Step into',
   },
   {
-    "<leader>Do",
+    '<leader>Do',
     function()
-      require("dap").step_out()
+      require('dap').step_out()
     end,
-    "Step out",
+    'Step out',
   },
   {
-    "<leader>Dr",
+    '<leader>Dr',
     function()
-      require("dap").repl.open()
+      require('dap').repl.open()
     end,
-    "REPL",
+    'REPL',
   },
   {
-    "<leader>De",
+    '<leader>De',
     function()
-      require("dap.ui.widgets").hover()
+      require('dap.ui.widgets').hover()
     end,
-    "Evaluate",
+    'Evaluate',
   },
   {
-    "<leader>Dp",
+    '<leader>Dp',
     function()
-      require("dap").terminate()
-      require("dap").repl.close()
-      require("dap-view").close()
+      require('dap').terminate()
+      require('dap').repl.close()
+      require('dap-view').close()
     end,
-    "Stop debugging",
+    'Stop debugging',
   },
   {
-    "<leader>Dv",
+    '<leader>Dv',
     function()
-      require("dap-view").toggle()
+      require('dap-view').toggle()
     end,
-    "Toggle DAP view",
+    'Toggle DAP view',
   },
 }) do
-  vim.keymap.set("n", spec[1], function()
+  vim.keymap.set('n', spec[1], function()
     ensure_dap()
     spec[2]()
   end, { desc = spec[3] })
@@ -165,25 +165,25 @@ end
 
 for _, spec in ipairs({
   {
-    "Debug",
+    'Debug',
     function()
-      require("dap").continue()
+      require('dap').continue()
     end,
-    "Start debug session",
+    'Start debug session',
   },
   {
-    "Breakpoint",
+    'Breakpoint',
     function()
-      require("dap").toggle_breakpoint()
+      require('dap').toggle_breakpoint()
     end,
-    "Toggle breakpoint",
+    'Toggle breakpoint',
   },
   {
-    "DapView",
+    'DapView',
     function()
-      require("dap-view").toggle()
+      require('dap-view').toggle()
     end,
-    "Toggle DAP view",
+    'Toggle DAP view',
   },
 }) do
   vim.api.nvim_create_user_command(spec[1], function()
