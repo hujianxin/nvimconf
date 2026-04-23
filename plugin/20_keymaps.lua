@@ -6,9 +6,6 @@
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right' })
 
--- Clear search highlight
-vim.keymap.set('n', '<ESC>', ':nohlsearch<CR>', { silent = true, desc = 'Clear search highlight' })
-
 -- Quick quit
 vim.keymap.set('n', 'zq', ':q<CR>', { silent = true, desc = 'Quit' })
 
