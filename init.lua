@@ -19,7 +19,7 @@
 -- │   ├── 40_treesitter.lua       Treesitter, UFO folding, guess-indent
 -- │   ├── 50_lsp.lua              LSP & Completion (mini.completion)
 -- │   ├── 60_formatting.lua       Code formatting (conform.nvim)
--- │   ├── 70_tools.lua            UI & Tools (flash, trouble, grug-far, overseer, multicursor, toggleterm, etc.)
+-- │   ├── 70_tools.lua            UI & Tools (flash, trouble, grug-far, overseer, visual-multi, toggleterm, etc.)
 -- │   └── 80_test.lua             Test configuration
 -- ├── after/                      Files to override behavior added by plugins
 -- │   ├── ftplugin/               Filetype-specific settings (per-buffer/window)
