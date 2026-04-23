@@ -44,6 +44,10 @@
       "rev": "5849ef04c32a6a8e55957b946c0a275801d87530",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
+    "multicursor.nvim": {
+      "rev": "704b99f10a72cc05d370cfeb294ff83412a8ab55",
+      "src": "https://github.com/jake-stewart/multicursor.nvim"
+    },
     "nvim-dap": {
       "rev": "45a69eba683a2c448dd9ecfc4de89511f0646b5f",
       "src": "https://github.com/mfussenegger/nvim-dap"
@@ -103,10 +107,6 @@
     "vim-test": {
       "rev": "bc0e94059de40641d163516a83c63bc45c716acf",
       "src": "https://github.com/vim-test/vim-test"
-    },
-    "vim-visual-multi": {
-      "rev": "a6975e7c1ee157615bbc80fc25e4392f71c344d4",
-      "src": "https://github.com/mg979/vim-visual-multi"
     }
   }
 }
