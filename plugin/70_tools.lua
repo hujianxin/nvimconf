@@ -363,6 +363,21 @@ later(function()
 end)
 
 -- ============================================================================
+-- Quicker.nvim - Enhanced quickfix list
+-- ============================================================================
+
+later(function()
+  add({ 'https://github.com/stevearc/quicker.nvim' })
+  require('quicker').setup({
+    constrain_cursor = true,
+    keep_cursor = true,
+    bbox = { top = 2, bottom = 2, left = 12, right = 12 },
+    trim_lines = true,
+    header_duration = 150,
+  })
+end)
+
+-- ============================================================================
 -- Trouble.nvim - Diagnostics and quickfix
 -- ============================================================================
 
