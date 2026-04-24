@@ -88,10 +88,6 @@
       "rev": "119e8961014c9bfaf1487bf3c2a393d254f337e2",
       "src": "https://github.com/kevinhwang91/promise-async"
     },
-    "rustaceanvim": {
-      "rev": "231bbfbba864b09248264c9f28f1fd7c14cd216f",
-      "src": "https://github.com/mrcjkb/rustaceanvim"
-    },
     "toggleterm.nvim": {
       "rev": "9a88eae817ef395952e08650b3283726786fb5fb",
       "src": "https://github.com/akinsho/toggleterm.nvim"
