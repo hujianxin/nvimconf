@@ -6,9 +6,6 @@
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right' })
 
--- Quick quit
-vim.keymap.set('n', 'zq', ':q<CR>', { silent = true, desc = 'Quit' })
-
 -- Incremental selection (treesitter/LSP)
 vim.keymap.set({ 'n', 'x', 'o' }, '<A-Up>', function()
   local parser = vim.treesitter.get_parser(nil, nil, { error = false })
