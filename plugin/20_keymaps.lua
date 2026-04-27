@@ -2,10 +2,6 @@
 -- Key Mappings (plugin/20_keymaps.lua)
 -- ============================================================================
 
--- Better visual mode indenting
-vim.keymap.set('v', '<', '<gv', { desc = 'Indent left' })
-vim.keymap.set('v', '>', '>gv', { desc = 'Indent right' })
-
 -- Incremental selection (treesitter/LSP)
 vim.keymap.set({ 'n', 'x', 'o' }, '<A-Up>', function()
   local parser = vim.treesitter.get_parser(nil, nil, { error = false })
