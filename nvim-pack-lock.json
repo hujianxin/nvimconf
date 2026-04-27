@@ -41,7 +41,7 @@
       "src": "https://github.com/williamboman/mason.nvim"
     },
     "mini.nvim": {
-      "rev": "4f6f84a96b076747b736d100388a8d7844771d7d",
+      "rev": "be81509b7160aa02264a59789164a2e1c4a6750a",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
     "multicursor.nvim": {
@@ -57,7 +57,7 @@
       "src": "https://github.com/igorlfs/nvim-dap-view"
     },
     "nvim-lspconfig": {
-      "rev": "8fde495949782bb61c2605174e231d145a048d8c",
+      "rev": "21db1fd40cbcbf1524ae154ab8f394fdf085749a",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
