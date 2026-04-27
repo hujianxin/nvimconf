@@ -37,7 +37,7 @@ end)
 
 -- Set colorscheme from mini.nvim
 now(function()
-  vim.cmd.colorscheme('minischeme')
+  vim.cmd.colorscheme('miniwinter')
 end)
 
 -- mini.icons - Icon provider
