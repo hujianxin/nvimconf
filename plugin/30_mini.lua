@@ -539,7 +539,7 @@ later(function()
       { mode = 'n', keys = '<Leader>b', desc = 'Buffer' },
       { mode = 'n', keys = '<Leader>v', desc = 'Visits' },
       { mode = 'n', keys = '<Leader>t', desc = 'Test' },
-      { mode = 'n', keys = '<Leader>C', desc = 'CodeDiff' },
+      { mode = 'n', keys = '<Leader>C', desc = 'Diff' },
       { mode = 'n', keys = '<Leader>D', desc = 'Debug' },
       { mode = 'n', keys = '<Leader>G', desc = 'Git' },
       { mode = 'n', keys = '<Leader>K', desc = 'Kulala (HTTP)' },

@@ -228,59 +228,31 @@ on_filetype({ 'http', 'rest' }, function()
 end)
 
 -- ============================================================================
--- CodeDiff - VSCode-style diff viewer
+-- Diffview.nvim - Git diff viewer
 -- ============================================================================
 
-local function ensure_codediff()
-  if not package.loaded['codediff'] then
-    add({ 'https://github.com/esmuellert/codediff.nvim' })
-    require('codediff').setup({
-      diff = {
-        layout = 'side-by-side',
-        disable_inlay_hints = true,
-        max_computation_time_ms = 5000,
-        ignore_trim_whitespace = false,
-        jump_to_first_change = true,
-        highlight_priority = 100,
-        compute_moves = false,
-      },
-      explorer = {
-        position = 'left',
-        width = 40,
-        indent_markers = true,
-        initial_focus = 'explorer',
-        view_mode = 'list',
-        flatten_dirs = true,
-        file_filter = { ignore = { '.git/**', '.jj/**', 'node_modules/**', 'target/**', 'dist/**' } },
-        focus_on_select = false,
-        visible_groups = { staged = true, unstaged = true, conflicts = true },
-      },
-    })
-  end
-end
+later(function()
+  add({ 'https://github.com/sindrets/diffview.nvim' })
+  require('diffview').setup({
+    view = {
+      default = { layout = 'diff2_horizontal' },
+      merge_tool = { layout = 'diff3_horizontal' },
+    },
+    file_panel = { win_config = { width = 35 } },
+    keymaps = {
+      view = { { 'n', 'q', '<Cmd>DiffviewClose<CR>', { desc = 'Close' } } },
+      file_panel = { { 'n', 'q', '<Cmd>DiffviewClose<CR>', { desc = 'Close' } } },
+    },
+  })
+end)
 
-vim.api.nvim_create_user_command('CodeDiff', function(params)
-  ensure_codediff()
-  vim.cmd('CodeDiff ' .. params.args)
-end, { nargs = '*', complete = 'file', desc = 'CodeDiff explorer' })
-
-vim.api.nvim_create_user_command('CodeDiffHead', function()
-  ensure_codediff()
-  vim.cmd('CodeDiff HEAD')
-end, { desc = 'CodeDiff with HEAD' })
-
-vim.api.nvim_create_user_command('CodeDiffHistory', function()
-  ensure_codediff()
-  vim.cmd('CodeDiff history')
-end, { desc = 'CodeDiff history' })
-
-for _, spec in ipairs({
-  { '<leader>Cd', 'CodeDiff', 'CodeDiff files' },
-  { '<leader>Ch', 'CodeDiffHistory', 'CodeDiff history' },
-  { '<leader>CH', 'CodeDiffHead', 'CodeDiff with HEAD' },
-}) do
-  vim.keymap.set('n', spec[1], ':' .. spec[2] .. '<CR>', { desc = spec[3] })
-end
+vim.keymap.set('n', '<leader>Cd', ':DiffviewOpen<CR>', { desc = 'Diffview open' })
+vim.keymap.set('n', '<leader>Ch', ':DiffviewFileHistory<CR>', { desc = 'Diffview file history' })
+vim.keymap.set('n', '<leader>CH', ':DiffviewOpen HEAD<CR>', { desc = 'Diffview vs HEAD' })
+vim.keymap.set('n', '<leader>CC', ':DiffviewClose<CR>', { desc = 'Diffview close' })
+vim.keymap.set('n', '<leader>Cf', ':DiffviewFocusFiles<CR>', { desc = 'Focus file panel' })
+vim.keymap.set('n', '<leader>Ct', ':DiffviewToggleFiles<CR>', { desc = 'Toggle file panel' })
+vim.keymap.set('n', '<leader>Cr', ':DiffviewRefresh<CR>', { desc = 'Diffview refresh' })
 
 -- ============================================================================
 -- Flash.nvim - Fast navigation
