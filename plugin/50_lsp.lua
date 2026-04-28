@@ -31,7 +31,19 @@ now_if_args(function()
   capabilities.textDocument.foldingRange = { dynamicRegistration = false, lineFoldingOnly = true }
 
   vim.lsp.config('*', { capabilities = capabilities })
-  vim.lsp.enable({ 'ty', 'gopls', 'rust_analyzer', 'jsonls', 'yamlls', 'protols', 'lua_ls', 'zls' })
+  vim.lsp.enable({
+    'ty',
+    'gopls',
+    'rust_analyzer',
+    'jsonls',
+    'yamlls',
+    'protols',
+    'lua_ls',
+    'zls',
+    'bash',
+    'zsh',
+    'fish',
+  })
 
   -- LSP global mappings
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic float', silent = true })
