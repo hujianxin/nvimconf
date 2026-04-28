@@ -21,7 +21,7 @@
       "src": "https://github.com/rafamadriz/friendly-snippets"
     },
     "grug-far.nvim": {
-      "rev": "21604255d0e8f9968322f61f2b6c09e5efe1285a",
+      "rev": "21790e59dd0109a92a70cb874dd002af186314f5",
       "src": "https://github.com/MagicDuck/grug-far.nvim"
     },
     "guess-indent.nvim": {
@@ -57,7 +57,7 @@
       "src": "https://github.com/igorlfs/nvim-dap-view"
     },
     "nvim-lspconfig": {
-      "rev": "eeef061d58d759b5419c1e20c4b3a5bc3154f871",
+      "rev": "bf5abe69c1874531f359a822d0cff4d73e26113f",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
