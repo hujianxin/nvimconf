@@ -208,17 +208,6 @@ Config.new_autocmd({ 'InsertLeave', 'TextChanged' }, '*', function()
 end, 'Setup auto-save', { once = true })
 
 -- ============================================================================
--- LazyGit
--- ============================================================================
-
-vim.keymap.set('n', '<c-g>', function()
-  if not package.loaded['lazygit'] then
-    add({ 'https://github.com/kdheepak/lazygit.nvim', 'https://github.com/nvim-lua/plenary.nvim' })
-  end
-  vim.cmd('LazyGit')
-end, { desc = 'LazyGit' })
-
--- ============================================================================
 -- Kulala (HTTP client)
 -- ============================================================================
 
@@ -226,33 +215,6 @@ on_filetype({ 'http', 'rest' }, function()
   add({ 'https://github.com/mistweaverco/kulala.nvim' })
   require('kulala').setup({ global_keymaps = true, global_keymaps_prefix = '<leader>K', kulala_keymaps_prefix = '' })
 end)
-
--- ============================================================================
--- Diffview.nvim - Git diff viewer
--- ============================================================================
-
-later(function()
-  add({ 'https://github.com/sindrets/diffview.nvim' })
-  require('diffview').setup({
-    view = {
-      default = { layout = 'diff2_horizontal' },
-      merge_tool = { layout = 'diff3_horizontal' },
-    },
-    file_panel = { win_config = { width = 35 } },
-    keymaps = {
-      view = { { 'n', 'q', '<Cmd>DiffviewClose<CR>', { desc = 'Close' } } },
-      file_panel = { { 'n', 'q', '<Cmd>DiffviewClose<CR>', { desc = 'Close' } } },
-    },
-  })
-end)
-
-vim.keymap.set('n', '<leader>Cd', ':DiffviewOpen<CR>', { desc = 'Diffview open' })
-vim.keymap.set('n', '<leader>Ch', ':DiffviewFileHistory<CR>', { desc = 'Diffview file history' })
-vim.keymap.set('n', '<leader>CH', ':DiffviewOpen HEAD<CR>', { desc = 'Diffview vs HEAD' })
-vim.keymap.set('n', '<leader>CC', ':DiffviewClose<CR>', { desc = 'Diffview close' })
-vim.keymap.set('n', '<leader>Cf', ':DiffviewFocusFiles<CR>', { desc = 'Focus file panel' })
-vim.keymap.set('n', '<leader>Ct', ':DiffviewToggleFiles<CR>', { desc = 'Toggle file panel' })
-vim.keymap.set('n', '<leader>Cr', ':DiffviewRefresh<CR>', { desc = 'Diffview refresh' })
 
 -- ============================================================================
 -- Flash.nvim - Fast navigation

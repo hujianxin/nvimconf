@@ -271,13 +271,7 @@ later(function()
       end,
       'Find buffers',
     },
-    {
-      '<leader>g',
-      function()
-        MiniExtra.pickers.git_files()
-      end,
-      'Git files',
-    },
+
     {
       '<leader>o',
       function()
@@ -539,9 +533,9 @@ later(function()
       { mode = 'n', keys = '<Leader>b', desc = 'Buffer' },
       { mode = 'n', keys = '<Leader>v', desc = 'Visits' },
       { mode = 'n', keys = '<Leader>t', desc = 'Test' },
-      { mode = 'n', keys = '<Leader>C', desc = 'Diff' },
+
       { mode = 'n', keys = '<Leader>D', desc = 'Debug' },
-      { mode = 'n', keys = '<Leader>G', desc = 'Git' },
+      { mode = 'n', keys = '<Leader>g', desc = 'Git' },
       { mode = 'n', keys = '<Leader>K', desc = 'Kulala (HTTP)' },
       { mode = 'n', keys = '<Leader>O', desc = 'Overseer' },
       { mode = 'n', keys = '<Leader>S', desc = 'Session' },
@@ -642,8 +636,8 @@ later(function()
   local toggle_diff = function()
     mini_diff.toggle_overlay(0)
   end
-  vim.keymap.set('n', '<leader>Gd', toggle_diff, { desc = 'Toggle diff overlay' })
-  vim.keymap.set('n', '<leader>Gh', toggle_diff, { desc = 'Toggle diff overlay' })
+  vim.keymap.set('n', '<leader>gd', toggle_diff, { desc = 'Toggle diff overlay' })
+  vim.keymap.set('n', '<leader>gh', toggle_diff, { desc = 'Toggle diff overlay' })
   vim.keymap.set('n', ']g', function()
     mini_diff.goto_hunk('next')
   end, { desc = 'Next git hunk' })
@@ -655,8 +649,22 @@ end)
 -- mini.git - Git integration
 later(function()
   require('mini.git').setup()
-  vim.keymap.set('n', '<leader>Gb', '<cmd>lua MiniGit.show_at_cursor()<cr>', { desc = 'Git blame at cursor' })
-  vim.keymap.set('n', '<leader>GB', '<cmd>lua MiniGit.show_range_history()<cr>', { desc = 'Git blame range' })
+
+  -- Inspect
+  vim.keymap.set('n', '<leader>gb', '<cmd>lua MiniGit.show_at_cursor()<cr>', { desc = 'Git blame at cursor' })
+  vim.keymap.set('n', '<leader>gB', '<cmd>lua MiniGit.show_range_history()<cr>', { desc = 'Git blame range' })
+  vim.keymap.set('n', '<leader>gS', '<cmd>lua MiniGit.show_diff_source()<cr>', { desc = 'Git show diff source' })
+
+  -- Daily workflow
+  vim.keymap.set('n', '<leader>gc', '<cmd>Git commit<cr>', { desc = 'Git commit' })
+  vim.keymap.set('n', '<leader>gp', '<cmd>Git push<cr>', { desc = 'Git push' })
+  vim.keymap.set('n', '<leader>gP', '<cmd>Git pull --rebase<cr>', { desc = 'Git pull rebase' })
+  vim.keymap.set('n', '<leader>gl', '<cmd>Git log --oneline<cr>', { desc = 'Git log (oneline)' })
+  vim.keymap.set('n', '<leader>gL', '<cmd>Git log --oneline --graph --all<cr>', { desc = 'Git log (graph all)' })
+  vim.keymap.set('n', '<leader>gs', '<cmd>Git status<cr>', { desc = 'Git status' })
+  vim.keymap.set('n', '<leader>ga', '<cmd>Git commit --amend<cr>', { desc = 'Git commit amend' })
+  vim.keymap.set('n', '<leader>gw', '<cmd>Git stash<cr>', { desc = 'Git stash' })
+  vim.keymap.set('n', '<leader>gW', '<cmd>Git stash pop<cr>', { desc = 'Git stash pop' })
 end)
 
 -- mini.hipatterns - Highlight patterns in text
