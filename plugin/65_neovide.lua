@@ -79,12 +79,6 @@ end
 -- Keymaps: File operations
 -- ============================================================================
 
-vim.keymap.set('n', '<D-n>', ':confirm enew<CR>', { silent = true })
-vim.keymap.set('v', '<D-n>', '<Esc><D-n>gv', { silent = true })
-vim.keymap.set('i', '<D-n>', '<C-O><D-n>', { silent = true })
-vim.keymap.set('c', '<D-n>', '<C-C><D-n>', { silent = true })
-vim.keymap.set('o', '<D-n>', '<Esc><D-n>', { silent = true })
-
 vim.keymap.set('n', '<D-o>', ':browse confirm e<CR>', { silent = true })
 vim.keymap.set('v', '<D-o>', '<Esc><D-o>gv', { silent = true })
 vim.keymap.set('i', '<D-o>', '<C-O><D-o>', { silent = true })
