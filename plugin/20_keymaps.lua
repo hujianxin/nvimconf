@@ -21,6 +21,9 @@ vim.keymap.set({ 'n', 'x', 'o' }, '<A-Down>', function()
   end
 end, { desc = 'Select child treesitter node or inner incremental lsp selections' })
 
+-- Clear search highlight
+vim.keymap.set('n', '<C-l>', '<cmd>noh<cr>', { desc = 'Clear search highlight' })
+
 -- Built-in undotree (Neovim 0.12+)
 Config.later(function()
   vim.cmd.packadd('nvim.undotree')
