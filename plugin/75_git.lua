@@ -4,17 +4,17 @@
 --
 --   <leader>g keymap overview (see also plugin/30_mini.lua for mini.diff/mini.git)
 --
---          Inspect                 Daily workflow         Stash         Diffview
---       ┌───────────────┐    ┌─────────────────────┐    ┌─────────┐    ┌──────────────────────┐
---       │ gb  blame     │    │ gc  commit          │    │ gw save │    │ go  open             │
---       │ gB  blame L   │    │ ga  amend           │    │ gW pop  │    │ gO  open vs HEAD     │
---       │ gS  diff src  │    │ gp  push            │    └─────────┘    │ gf  file history     │
---       │ gd  toggle    │    │ gP  pull --rebase   │                   │ gq  close            │
---       │ gh  toggle    │    │ gl  log --oneline   │                   │ gF  focus panel      │
---       └───────────────┘    │ gL  log --graph     │                   │ gt  toggle panel     │
---                            │ gs  status          │                   │ gr  refresh          │
---                            └─────────────────────┘                   │ gH  this file vs rev │
---                                                                      └──────────────────────┘
+--             Tools                       Daily                  Stash         Diffview
+--       ┌───────────────┐    ┌───────────────────────┐    ┌─────────┐    ┌──────────────────────┐
+--       │ gb  blame     │    │ gc  commit            │    │ gw save │    │ go  open             │
+--       │ gB  blame L   │    │ ga  amend             │    │ gW pop  │    │ gO  open vs HEAD     │
+--       │ gS  diff src  │    │ gp  push              │    └─────────┘    │ gf  file history     │
+--       │ gd  toggle    │    │ gP  pull --rebase     │                   │ gq  close            │
+--       │ gh  toggle    │    │ gl  log --oneline     │                   │ gF  focus panel      │
+--       │ gg  lazygit   │    │ gL  log --graph       │                   │ gt  toggle panel     │
+--       └───────────────┘    │ gs  status            │                   │ gr  refresh          │
+--                            └───────────────────────┘                   │ gH  this file vs rev │
+--                                                                        └──────────────────────┘
 --
 
 local add = vim.pack.add
