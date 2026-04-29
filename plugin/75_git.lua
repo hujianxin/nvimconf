@@ -24,10 +24,19 @@ local later = Config.later
 -- LazyGit
 -- ============================================================================
 
-vim.keymap.set('n', '<c-g>', function()
+local function ensure_lazygit()
   if not package.loaded['lazygit'] then
     add({ 'https://github.com/kdheepak/lazygit.nvim', 'https://github.com/nvim-lua/plenary.nvim' })
   end
+end
+
+vim.keymap.set('n', '<c-g>', function()
+  ensure_lazygit()
+  vim.cmd('LazyGit')
+end, { desc = 'LazyGit' })
+
+vim.keymap.set('n', '<leader>gg', function()
+  ensure_lazygit()
   vim.cmd('LazyGit')
 end, { desc = 'LazyGit' })
 
