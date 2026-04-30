@@ -2,6 +2,25 @@
 -- Treesitter Configuration (plugin/40_treesitter.lua)
 -- ============================================================================
 
+-- Incremental selection (treesitter/LSP)
+vim.keymap.set({ 'n', 'x', 'o' }, '<A-Up>', function()
+  local parser = vim.treesitter.get_parser(nil, nil, { error = false })
+  if parser then
+    require('vim.treesitter._select').select_parent(vim.v.count1)
+  else
+    vim.lsp.buf.selection_range(vim.v.count1)
+  end
+end, { desc = 'Select parent treesitter node or outer incremental lsp selections' })
+
+vim.keymap.set({ 'n', 'x', 'o' }, '<A-Down>', function()
+  local parser = vim.treesitter.get_parser(nil, nil, { error = false })
+  if parser then
+    require('vim.treesitter._select').select_child(vim.v.count1)
+  else
+    vim.lsp.buf.selection_range(-vim.v.count1)
+  end
+end, { desc = 'Select child treesitter node or inner incremental lsp selections' })
+
 local add = vim.pack.add
 local now_if_args = Config.now_if_args
 

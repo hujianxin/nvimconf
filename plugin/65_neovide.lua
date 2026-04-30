@@ -8,13 +8,10 @@ if not vim.g.neovide then
   return
 end
 
--- ============================================================================
--- Colorscheme
--- ============================================================================
-
+-- Add colorscheme early so it's available on first paint
 vim.pack.add({ 'https://github.com/projekt0n/github-nvim-theme' })
 vim.opt.background = 'light'
-vim.cmd('colorscheme github_light')
+vim.cmd('colorscheme github_light_default')
 
 -- ============================================================================
 -- Visual & input settings

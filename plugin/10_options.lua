@@ -99,6 +99,9 @@ if vim.fn.exists('syntax_on') ~= 1 then
   vim.cmd('syntax enable')
 end
 
+-- Clear search highlight
+vim.keymap.set('n', '<C-l>', '<cmd>noh<cr>', { desc = 'Clear search highlight' })
+
 -- UI2 (Neovim 0.12+ experimental)
 local ok, ui2 = pcall(require, 'vim._core.ui2')
 if ok and ui2 then

@@ -2,6 +2,12 @@
 -- UI & Tools Configuration (plugin/70_tools.lua)
 -- ============================================================================
 
+-- Built-in undotree (Neovim 0.12+)
+Config.later(function()
+  vim.cmd.packadd('nvim.undotree')
+  vim.keymap.set('n', '<leader>u', require('undotree').open, { desc = 'Open undotree' })
+end)
+
 local add = vim.pack.add
 local later, on_filetype = Config.later, Config.on_filetype
 
