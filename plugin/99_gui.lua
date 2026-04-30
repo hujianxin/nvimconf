@@ -1,5 +1,5 @@
 -- ============================================================================
--- Neovide GUI Configuration (plugin/65_neovide.lua)
+-- Neovide GUI Configuration (plugin/99_gui.lua)
 -- ============================================================================
 -- macOS-style keyboard shortcuts and font scaling for the Neovide GUI client.
 -- No-op when not running inside Neovide.
