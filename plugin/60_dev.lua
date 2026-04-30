@@ -75,6 +75,30 @@ vim.keymap.set('n', '<leader>gH', function()
   end
 end, { desc = 'Git diff current file vs revision' })
 
+vim.keymap.set('n', '<leader>g=', function()
+  local rev = vim.fn.input('Diff current file vs: ')
+  if rev == '' then
+    return
+  end
+
+  local relpath = vim.fn.fnamemodify(vim.fn.expand('%:p'), ':.')
+  local tmp = vim.fn.tempname()
+
+  vim.fn.system(string.format('git show %s:%s > %s', rev, relpath, tmp))
+  if vim.v.shell_error ~= 0 then
+    vim.notify('File not found in ' .. rev, vim.log.levels.ERROR)
+    return
+  end
+
+  local curwin = vim.api.nvim_get_current_win()
+  vim.cmd('keepalt vertical diffsplit ' .. vim.fn.fnameescape(tmp))
+  vim.bo.buftype = 'nofile'
+  vim.bo.bufhidden = 'wipe'
+  vim.bo.readonly = true
+  vim.bo.modifiable = false
+  vim.api.nvim_set_current_win(curwin)
+end, { desc = 'Side-by-side diff vs revision (editable)' })
+
 -- ============================================================================
 -- Task Runner & Terminal
 -- ============================================================================
