@@ -14,15 +14,12 @@
 -- ├── init.lua                    Entry point, loading helpers, plugin manager
 -- ├── plugin/                     Automatically sourced during startup
 -- │   ├── 10_options.lua          Built-in Neovim options, behavior
--- │   ├── 30_mini.lua             Mini.nvim configuration (all mini plugins)
--- │   ├── 40_treesitter.lua       Treesitter, UFO folding, guess-indent
--- │   ├── 50_lsp.lua              LSP & Completion (mini.completion)
--- │   ├── 60_formatting.lua       Code formatting (conform.nvim)
--- │   ├── 65_neovide.lua          Neovide GUI settings
--- │   ├── 70_tools.lua            UI & Tools (flash, trouble, grug-far, overseer, multicursor, toggleterm, etc.)
--- │   ├── 75_git.lua              Git tools
--- │   ├── 80_test.lua             Test configuration
--- │   └── 85_dap.lua              Debug Adapter Protocol
+-- │   ├── 20_mini.lua             Mini.nvim configuration (all mini plugins)
+-- │   ├── 30_treesitter.lua       Treesitter, UFO folding, guess-indent
+-- │   ├── 40_lsp.lua              LSP, Completion, and Diagnostics (trouble)
+-- │   ├── 50_edit.lua             Editing tools (formatting, multicursor, flash, grug-far, auto-save, undotree, quicker)
+-- │   ├── 55_gui.lua              GUI settings (Neovide, etc.)
+-- │   └── 60_dev.lua              Dev tools (git, runner, terminal, test, dap, kulala)
 -- ├── after/                      Files to override behavior added by plugins
 -- │   ├── ftplugin/               Filetype-specific settings (per-buffer/window)
 -- │   ├── lsp/                    Language server configurations

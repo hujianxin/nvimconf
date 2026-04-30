@@ -71,3 +71,35 @@ end)
 vim.api.nvim_create_user_command('OR', function()
   vim.lsp.buf.code_action({ context = { only = { 'source.organizeImports' } } })
 end, { desc = 'Organize imports' })
+
+-- ============================================================================
+-- Trouble.nvim - Diagnostics and quickfix
+-- ============================================================================
+
+local function trouble_cmd(cmd)
+  if not package.loaded['trouble'] then
+    add({ 'https://github.com/folke/trouble.nvim' })
+    require('trouble').setup({
+      icons = {
+        indent = { fold_open = '', fold_closed = '' },
+        folder_open = '',
+        folder_closed = '',
+        kinds = {},
+      },
+    })
+  end
+  vim.cmd(cmd)
+end
+
+for _, spec in ipairs({
+  { '<leader>XX', 'Trouble diagnostics toggle', 'Diagnostics' },
+  { '<leader>Xx', 'Trouble diagnostics toggle filter.buf=0', 'Buffer Diagnostics' },
+  { '<leader>Xs', 'Trouble symbols toggle focus=false', 'Symbols' },
+  { '<leader>Xl', 'Trouble lsp toggle focus=false win.position=right', 'LSP Definitions/References' },
+  { '<leader>XL', 'Trouble loclist toggle', 'Location List' },
+  { '<leader>XQ', 'Trouble qflist toggle', 'Quickfix List' },
+}) do
+  vim.keymap.set('n', spec[1], function()
+    trouble_cmd(spec[2])
+  end, { desc = spec[3] })
+end
