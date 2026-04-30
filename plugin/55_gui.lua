@@ -61,7 +61,7 @@ vim.api.nvim_create_autocmd({ 'CmdlineEnter', 'CmdlineLeave' }, {
 -- Font
 -- ============================================================================
 
-local DEFAULT_FONT = 'Maple Mono NF:h13'
+local DEFAULT_FONT = 'Maple Mono NF:h14'
 
 vim.o.guifont = DEFAULT_FONT
 
