@@ -487,7 +487,7 @@ end)
 -- mini.bracketed - Navigate with bracket mappings
 later(function()
   require('mini.bracketed').setup({
-    comment = { suffix = 'k' },
+    comment = { suffix = 'v' },
   })
 end)
 
