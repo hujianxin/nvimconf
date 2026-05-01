@@ -646,7 +646,7 @@ later(function()
   end, { desc = 'Prev git hunk' })
 end)
 
--- mini.git - Git integration
+--[[ mini.git - Git integration (disabled, using fugitive.vim instead)
 later(function()
   require('mini.git').setup()
 
@@ -666,6 +666,7 @@ later(function()
   vim.keymap.set('n', '<leader>gw', '<cmd>Git stash<cr>', { desc = 'Git stash' })
   vim.keymap.set('n', '<leader>gW', '<cmd>Git stash pop<cr>', { desc = 'Git stash pop' })
 end)
+--]]
 
 -- mini.hipatterns - Highlight patterns in text
 later(function()

@@ -12,19 +12,16 @@ local on_filetype = Config.on_filetype
 -- Git
 -- ============================================================================
 --
---   <leader>g keymap overview (see also plugin/20_mini.lua for mini.diff/mini.git)
+--   <leader>g keymap overview
 --
---             Tools                       Daily                  Stash         Diffview
---       ┌───────────────┐    ┌───────────────────────┐    ┌─────────┐    ┌──────────────────────┐
---       │ gb  blame     │    │ gc  commit            │    │ gw save │    │ go  open             │
---       │ gB  blame L   │    │ ga  amend             │    │ gW pop  │    │ gO  open vs HEAD     │
---       │ gS  diff src  │    │ gp  push              │    └─────────┘    │ gf  file history     │
---       │ gd  toggle    │    │ gP  pull --rebase     │                   │ gq  close            │
---       │ gh  toggle    │    │ gl  log --oneline     │                   │ gF  focus panel      │
---       │ gg  lazygit   │    │ gL  log --graph       │                   │ gt  toggle panel     │
---       └───────────────┘    │ gs  status            │                   │ gr  refresh          │
---                            └───────────────────────┘                   │ gH  this file vs rev │
---                                                                        └──────────────────────┘
+--             Inspect                     Daily                    Diff
+--       ┌───────────────┐    ┌───────────────────────┐    ┌──────────────────────┐
+--       │ gb  blame     │    │ gs  status            │    │ gD  vs index         │
+--       │ gf  file hist │    │ gl  log --oneline     │    │ gO  vs HEAD          │
+--       │ gS  HEAD ver  │    │ gL  log --graph       │    │ go  vs revision      │
+--       └───────────────┘    └───────────────────────┘    │ gq  close diff       │
+--                                                         └──────────────────────┘
+--
 --
 
 -- LazyGit
@@ -44,60 +41,31 @@ vim.keymap.set('n', '<leader>gg', function()
   vim.cmd('LazyGit')
 end, { desc = 'LazyGit' })
 
--- Diffview.nvim
+-- Fugitive.vim (provides :Git, :G, :Gvdiffsplit, etc.)
 later(function()
-  add({ 'https://github.com/sindrets/diffview.nvim' })
-  require('diffview').setup({
-    view = {
-      default = { layout = 'diff2_horizontal' },
-      merge_tool = { layout = 'diff3_horizontal' },
-    },
-    file_panel = { win_config = { width = 35 } },
-    keymaps = {
-      view = { { 'n', 'q', '<Cmd>DiffviewClose<CR>', { desc = 'Close' } } },
-      file_panel = { { 'n', 'q', '<Cmd>DiffviewClose<CR>', { desc = 'Close' } } },
-    },
-  })
+  add({ 'https://github.com/tpope/vim-fugitive' })
 end)
 
-vim.keymap.set('n', '<leader>go', ':DiffviewOpen<CR>', { desc = 'Git diffview open' })
-vim.keymap.set('n', '<leader>gO', ':DiffviewOpen HEAD<CR>', { desc = 'Git diffview vs HEAD' })
-vim.keymap.set('n', '<leader>gf', ':DiffviewFileHistory<CR>', { desc = 'Git file history' })
-vim.keymap.set('n', '<leader>gq', ':DiffviewClose<CR>', { desc = 'Git diffview close' })
-vim.keymap.set('n', '<leader>gF', ':DiffviewFocusFiles<CR>', { desc = 'Git focus file panel' })
-vim.keymap.set('n', '<leader>gt', ':DiffviewToggleFiles<CR>', { desc = 'Git toggle file panel' })
-vim.keymap.set('n', '<leader>gr', ':DiffviewRefresh<CR>', { desc = 'Git diffview refresh' })
+-- Daily workflow
+vim.keymap.set('n', '<leader>gs', ':Git<CR>', { desc = 'Git status' })
+vim.keymap.set('n', '<leader>gl', ':Git log --oneline<CR>', { desc = 'Git log (oneline)' })
+vim.keymap.set('n', '<leader>gL', ':Git log --oneline --graph --all<CR>', { desc = 'Git log (graph all)' })
 
-vim.keymap.set('n', '<leader>gH', function()
+-- Diff & blame
+vim.keymap.set('n', '<leader>gb', ':G blame<CR>', { desc = 'Git blame' })
+vim.keymap.set('n', '<leader>gD', ':Gvdiffsplit<CR>', { desc = 'Git diff vs index' })
+vim.keymap.set('n', '<leader>gO', ':Gvdiffsplit HEAD<CR>', { desc = 'Git diff vs HEAD' })
+vim.keymap.set('n', '<leader>go', function()
   local rev = vim.fn.input('Diff current file vs: ')
   if rev ~= '' then
-    vim.cmd('DiffviewOpen ' .. rev .. ' -- %')
+    vim.cmd('Gvdiffsplit ' .. rev .. ':%')
   end
 end, { desc = 'Git diff current file vs revision' })
+vim.keymap.set('n', '<leader>gf', ':0Gclog<CR>', { desc = 'Git file history' })
+vim.keymap.set('n', '<leader>gq', ':diffoff!<CR>:close<CR>', { desc = 'Close diff window' })
 
-vim.keymap.set('n', '<leader>g=', function()
-  local rev = vim.fn.input('Diff current file vs: ')
-  if rev == '' then
-    return
-  end
-
-  local relpath = vim.fn.fnamemodify(vim.fn.expand('%:p'), ':.')
-  local tmp = vim.fn.tempname()
-
-  vim.fn.system(string.format('git show %s:%s > %s', rev, relpath, tmp))
-  if vim.v.shell_error ~= 0 then
-    vim.notify('File not found in ' .. rev, vim.log.levels.ERROR)
-    return
-  end
-
-  local curwin = vim.api.nvim_get_current_win()
-  vim.cmd('keepalt vertical diffsplit ' .. vim.fn.fnameescape(tmp))
-  vim.bo.buftype = 'nofile'
-  vim.bo.bufhidden = 'wipe'
-  vim.bo.readonly = true
-  vim.bo.modifiable = false
-  vim.api.nvim_set_current_win(curwin)
-end, { desc = 'Side-by-side diff vs revision (editable)' })
+-- Browse
+vim.keymap.set('n', '<leader>gS', ':Gedit HEAD:%<CR>', { desc = 'Open HEAD version' })
 
 -- ============================================================================
 -- Task Runner & Terminal
