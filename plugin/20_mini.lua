@@ -486,7 +486,9 @@ end)
 
 -- mini.bracketed - Navigate with bracket mappings
 later(function()
-  require('mini.bracketed').setup()
+  require('mini.bracketed').setup({
+    comment = { suffix = 'k' },
+  })
 end)
 
 -- mini.bufremove - Remove buffers without closing windows

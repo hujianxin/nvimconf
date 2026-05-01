@@ -11,18 +11,6 @@ local on_filetype = Config.on_filetype
 -- ============================================================================
 -- Git
 -- ============================================================================
---
---   <leader>g keymap overview
---
---             Inspect                     Daily                    Diff
---       ┌───────────────┐    ┌───────────────────────┐    ┌──────────────────────┐
---       │ gb  blame     │    │ gs  status            │    │ gD  vs index         │
---       │ gf  file hist │    │ gl  log --oneline     │    │ gO  vs HEAD          │
---       │ gS  HEAD ver  │    │ gL  log --graph       │    │ go  vs revision      │
---       └───────────────┘    └───────────────────────┘    │ gq  close diff       │
---                                                         └──────────────────────┘
---
---
 
 -- LazyGit
 local function ensure_lazygit()
@@ -47,9 +35,9 @@ later(function()
 end)
 
 -- Daily workflow
-vim.keymap.set('n', '<leader>gs', ':Git<CR>', { desc = 'Git status' })
-vim.keymap.set('n', '<leader>gl', ':Git log --oneline<CR>', { desc = 'Git log (oneline)' })
-vim.keymap.set('n', '<leader>gL', ':Git log --oneline --graph --all<CR>', { desc = 'Git log (graph all)' })
+vim.keymap.set('n', '<leader>gs', ':G<CR>', { desc = 'Git status' })
+vim.keymap.set('n', '<leader>gl', ':G log --oneline<CR>', { desc = 'Git log (oneline)' })
+vim.keymap.set('n', '<leader>gL', ':G log --oneline --graph --all<CR>', { desc = 'Git log (graph all)' })
 
 -- Diff & blame
 vim.keymap.set('n', '<leader>gb', ':G blame<CR>', { desc = 'Git blame' })
