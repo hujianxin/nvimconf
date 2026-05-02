@@ -109,29 +109,3 @@ Config.on_packchanged = function(plugin_name, kinds, callback, desc)
   end
   Config.new_autocmd('PackChanged', '*', f, desc)
 end
-
--- ============================================================================
--- File path copy helpers
--- ============================================================================
-
-local function copy_to_clipboard(text, label)
-  if text == '' then
-    vim.notify('No file associated with current buffer', vim.log.levels.WARN)
-    return
-  end
-  vim.fn.setreg('+', text)
-  vim.notify(label .. ' copied: ' .. text, vim.log.levels.INFO)
-end
-
-for _, spec in ipairs({
-  { 'CopyFilename', ':t', 'Filename' },
-  { 'CopyRelPath', ':.', 'Relative path' },
-  { 'CopyAbsPath', ':p', 'Absolute path' },
-  { 'CopyRelDir', ':.:h', 'Relative directory' },
-  { 'CopyAbsDir', ':p:h', 'Absolute directory' },
-}) do
-  vim.api.nvim_create_user_command(spec[1], function()
-    local path = vim.fn.expand('%' .. spec[2])
-    copy_to_clipboard(path, spec[3])
-  end, { desc = 'Copy ' .. spec[3]:lower() .. ' to clipboard' })
-end
