@@ -101,18 +101,27 @@ local maximized_tab = nil
 
 vim.api.nvim_create_user_command('MyToggleMaximizeCurrentWindow', function()
   if maximized_tab then
-    local current_tab = vim.api.nvim_get_current_tabpage()
-    if current_tab == maximized_tab then
-      vim.cmd('tabclose')
-    else
+    -- Check if the maximized tab still exists (user might have closed it manually)
+    local exists = false
+    for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+      if tab == maximized_tab then
+        exists = true
+        break
+      end
+    end
+
+    if exists then
+      -- Switch to the maximized tab and close it. This leaves us back in the original tab.
       vim.api.nvim_set_current_tabpage(maximized_tab)
       vim.cmd('tabclose')
     end
+
     maximized_tab = nil
     vim.notify('Window layout restored', vim.log.levels.INFO)
   else
-    maximized_tab = vim.api.nvim_get_current_tabpage()
+    -- Create a new tab with the current window. Save the NEW tab's handle so we can close it later.
     vim.cmd('tab split')
+    maximized_tab = vim.api.nvim_get_current_tabpage()
     vim.notify('Current window maximized', vim.log.levels.INFO)
   end
 end, { desc = 'Toggle maximize and restore the current window' })
