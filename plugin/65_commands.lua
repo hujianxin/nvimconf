@@ -97,16 +97,22 @@ end, { desc = 'Close all unmodified buffers' })
 -- Window management
 -- ============================================================================
 
-local saved_window_layout = nil
+local maximized_tab = nil
 
 vim.api.nvim_create_user_command('MyToggleMaximizeCurrentWindow', function()
-  if saved_window_layout then
-    vim.cmd(saved_window_layout)
-    saved_window_layout = nil
+  if maximized_tab then
+    local current_tab = vim.api.nvim_get_current_tabpage()
+    if current_tab == maximized_tab then
+      vim.cmd('tabclose')
+    else
+      vim.api.nvim_set_current_tabpage(maximized_tab)
+      vim.cmd('tabclose')
+    end
+    maximized_tab = nil
     vim.notify('Window layout restored', vim.log.levels.INFO)
   else
-    saved_window_layout = vim.fn.winrestcmd()
-    vim.cmd('only')
+    maximized_tab = vim.api.nvim_get_current_tabpage()
+    vim.cmd('tab split')
     vim.notify('Current window maximized', vim.log.levels.INFO)
   end
 end, { desc = 'Toggle maximize and restore the current window' })
