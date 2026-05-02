@@ -65,7 +65,7 @@ vim.keymap.set('n', '<leader>gq', function()
 end, { desc = 'Close diffview' })
 
 -- Diff current file against a chosen revision (via mini.pick)
-vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstChosenGitRevision', function()
+vim.api.nvim_create_user_command('MyDiffviewOpenCurrentBufferFileAgainstChosenGitRevision', function()
   ensure_neogit()
   local file = vim.fn.expand('%')
   if file == '' then
@@ -93,12 +93,12 @@ end, { desc = 'Diff current buffer file against a chosen git revision (via mini.
 vim.keymap.set(
   'n',
   '<leader>go',
-  ':DiffviewOpenCurrentBufferFileAgainstChosenGitRevision<CR>',
+  ':MyDiffviewOpenCurrentBufferFileAgainstChosenGitRevision<CR>',
   { desc = 'Diff file vs revision (pick)' }
 )
 
 -- Diff current file against a specific revision (typed input)
-vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision', function(opts)
+vim.api.nvim_create_user_command('MyDiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision', function(opts)
   ensure_neogit()
   local file = vim.fn.expand('%')
   if file == '' then
@@ -120,7 +120,7 @@ end, { nargs = '?', desc = 'Diff current buffer file against a specified git rev
 vim.keymap.set(
   'n',
   '<leader>gO',
-  ':DiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision<CR>',
+  ':MyDiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision<CR>',
   { desc = 'Diff file vs revision (input)' }
 )
 
