@@ -148,7 +148,7 @@ vim.api.nvim_create_user_command('MyShowSelectionCharacterAndWordCount', functio
   local _, words = text:gsub('%S+', '')
 
   vim.notify(string.format('Selection: %d characters, %d words', chars, words), vim.log.levels.INFO)
-end, { desc = 'Show character and word count of the last visual selection' })
+end, { range = true, desc = 'Show character and word count of the last visual selection' })
 
 -- ============================================================================
 -- File information
@@ -224,7 +224,7 @@ vim.api.nvim_create_user_command('MyUrlEncodeSelection', function()
 
   vim.fn.setreg('+', encoded)
   vim.notify('URL encoded selection copied to system clipboard', vim.log.levels.INFO)
-end, { desc = 'URL encode the last visual selection and copy to system clipboard' })
+end, { range = true, desc = 'URL encode the last visual selection and copy to system clipboard' })
 
 vim.api.nvim_create_user_command('MyBase64EncodeSelection', function()
   local text, err = get_last_visual_selection_text()
@@ -241,4 +241,4 @@ vim.api.nvim_create_user_command('MyBase64EncodeSelection', function()
 
   vim.fn.setreg('+', encoded)
   vim.notify('Base64 encoded selection copied to system clipboard', vim.log.levels.INFO)
-end, { desc = 'Base64 encode the last visual selection and copy to system clipboard' })
+end, { range = true, desc = 'Base64 encode the last visual selection and copy to system clipboard' })
