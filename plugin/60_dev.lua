@@ -64,6 +64,47 @@ vim.keymap.set('n', '<leader>gq', function()
   require('diffview').close()
 end, { desc = 'Close diffview' })
 
+-- Diff current file against a chosen revision (via mini.pick)
+vim.keymap.set('n', '<leader>go', function()
+  ensure_neogit()
+  local file = vim.fn.expand('%')
+  if file == '' then
+    vim.notify('No file in current buffer', vim.log.levels.WARN)
+    return
+  end
+  local ok, commits = pcall(vim.fn.systemlist, { 'git', 'log', '--format=%h %s', '--', file })
+  if not ok or #commits == 0 then
+    vim.notify('No history for this file', vim.log.levels.WARN)
+    return
+  end
+  local MiniPick = require('mini.pick')
+  local chosen = MiniPick.start({
+    source = {
+      items = commits,
+      name = 'Git history: ' .. vim.fn.fnamemodify(file, ':t'),
+    },
+  })
+  if chosen then
+    local rev = chosen:match('^%S+')
+    require('diffview').open({ rev, '--', file })
+  end
+end, { desc = 'Diff file vs revision (pick)' })
+
+-- Diff current file against a specific revision (typed input)
+vim.keymap.set('n', '<leader>gO', function()
+  ensure_neogit()
+  local file = vim.fn.expand('%')
+  if file == '' then
+    vim.notify('No file in current buffer', vim.log.levels.WARN)
+    return
+  end
+  vim.ui.input({ prompt = 'Diff vs revision: ' }, function(rev)
+    if rev and rev ~= '' then
+      require('diffview').open({ rev, '--', file })
+    end
+  end)
+end, { desc = 'Diff file vs revision (input)' })
+
 -- ============================================================================
 -- Task Runner & Terminal
 -- ============================================================================
