@@ -65,7 +65,7 @@ vim.keymap.set('n', '<leader>gq', function()
 end, { desc = 'Close diffview' })
 
 -- Diff current file against a chosen revision (via mini.pick)
-vim.keymap.set('n', '<leader>go', function()
+vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstChosenGitRevision', function()
   ensure_neogit()
   local file = vim.fn.expand('%')
   if file == '' then
@@ -88,22 +88,41 @@ vim.keymap.set('n', '<leader>go', function()
     local rev = chosen:match('^%S+')
     require('diffview').open({ rev, '--', file })
   end
-end, { desc = 'Diff file vs revision (pick)' })
+end, { desc = 'Diff current buffer file against a chosen git revision (via mini.pick)' })
+
+vim.keymap.set(
+  'n',
+  '<leader>go',
+  ':DiffviewOpenCurrentBufferFileAgainstChosenGitRevision<CR>',
+  { desc = 'Diff file vs revision (pick)' }
+)
 
 -- Diff current file against a specific revision (typed input)
-vim.keymap.set('n', '<leader>gO', function()
+vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision', function(opts)
   ensure_neogit()
   local file = vim.fn.expand('%')
   if file == '' then
     vim.notify('No file in current buffer', vim.log.levels.WARN)
     return
   end
-  vim.ui.input({ prompt = 'Diff vs revision: ' }, function(rev)
-    if rev and rev ~= '' then
-      require('diffview').open({ rev, '--', file })
-    end
-  end)
-end, { desc = 'Diff file vs revision (input)' })
+  local rev = opts.args ~= '' and opts.args or nil
+  if not rev then
+    vim.ui.input({ prompt = 'Diff vs revision: ' }, function(input)
+      if input and input ~= '' then
+        require('diffview').open({ input, '--', file })
+      end
+    end)
+  else
+    require('diffview').open({ rev, '--', file })
+  end
+end, { nargs = '?', desc = 'Diff current buffer file against a specified git revision' })
+
+vim.keymap.set(
+  'n',
+  '<leader>gO',
+  ':DiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision<CR>',
+  { desc = 'Diff file vs revision (input)' }
+)
 
 -- ============================================================================
 -- Task Runner & Terminal
