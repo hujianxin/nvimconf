@@ -648,27 +648,15 @@ later(function()
   end, { desc = 'Prev git hunk' })
 end)
 
---[[ mini.git - Git integration (disabled, using fugitive.vim instead)
+-- mini.git - Git integration (complements neogit)
 later(function()
   require('mini.git').setup()
 
-  -- Inspect
+  -- Inspect / blame (unique to mini.git, no conflict with neogit)
   vim.keymap.set('n', '<leader>gb', '<cmd>lua MiniGit.show_at_cursor()<cr>', { desc = 'Git blame at cursor' })
   vim.keymap.set('n', '<leader>gB', '<cmd>lua MiniGit.show_range_history()<cr>', { desc = 'Git blame range' })
   vim.keymap.set('n', '<leader>gS', '<cmd>lua MiniGit.show_diff_source()<cr>', { desc = 'Git show diff source' })
-
-  -- Daily workflow
-  vim.keymap.set('n', '<leader>gc', '<cmd>Git commit<cr>', { desc = 'Git commit' })
-  vim.keymap.set('n', '<leader>gp', '<cmd>Git push<cr>', { desc = 'Git push' })
-  vim.keymap.set('n', '<leader>gP', '<cmd>Git pull --rebase<cr>', { desc = 'Git pull rebase' })
-  vim.keymap.set('n', '<leader>gl', '<cmd>Git log --oneline<cr>', { desc = 'Git log (oneline)' })
-  vim.keymap.set('n', '<leader>gL', '<cmd>Git log --oneline --graph --all<cr>', { desc = 'Git log (graph all)' })
-  vim.keymap.set('n', '<leader>gs', '<cmd>Git status<cr>', { desc = 'Git status' })
-  vim.keymap.set('n', '<leader>ga', '<cmd>Git commit --amend<cr>', { desc = 'Git commit amend' })
-  vim.keymap.set('n', '<leader>gw', '<cmd>Git stash<cr>', { desc = 'Git stash' })
-  vim.keymap.set('n', '<leader>gW', '<cmd>Git stash pop<cr>', { desc = 'Git stash pop' })
 end)
---]]
 
 -- mini.hipatterns - Highlight patterns in text
 later(function()

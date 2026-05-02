@@ -15,7 +15,10 @@ local on_filetype = Config.on_filetype
 -- LazyGit
 local function ensure_lazygit()
   if not package.loaded['lazygit'] then
-    add({ 'https://github.com/kdheepak/lazygit.nvim', 'https://github.com/nvim-lua/plenary.nvim' })
+    add({
+      'https://github.com/nvim-lua/plenary.nvim',
+      'https://github.com/kdheepak/lazygit.nvim',
+    })
   end
 end
 
@@ -24,36 +27,42 @@ vim.keymap.set('n', '<c-g>', function()
   vim.cmd('LazyGit')
 end, { desc = 'LazyGit' })
 
-vim.keymap.set('n', '<leader>gg', function()
-  ensure_lazygit()
-  vim.cmd('LazyGit')
-end, { desc = 'LazyGit' })
-
--- Fugitive.vim (provides :Git, :G, :Gvdiffsplit, etc.)
-later(function()
-  add({ 'https://github.com/tpope/vim-fugitive' })
-end)
-
--- Daily workflow
-vim.keymap.set('n', '<leader>gs', ':G<CR>', { desc = 'Git status' })
-vim.keymap.set('n', '<leader>gl', ':G log --oneline<CR>', { desc = 'Git log (oneline)' })
-vim.keymap.set('n', '<leader>gL', ':G log --oneline --graph --all<CR>', { desc = 'Git log (graph all)' })
-
--- Diff & blame
-vim.keymap.set('n', '<leader>gb', ':G blame<CR>', { desc = 'Git blame' })
-vim.keymap.set('n', '<leader>gD', ':Gvdiffsplit<CR>', { desc = 'Git diff vs index' })
-vim.keymap.set('n', '<leader>gO', ':Gvdiffsplit HEAD<CR>', { desc = 'Git diff vs HEAD' })
-vim.keymap.set('n', '<leader>go', function()
-  local rev = vim.fn.input('Diff current file vs: ')
-  if rev ~= '' then
-    vim.cmd('Gvdiffsplit ' .. rev .. ':%')
+-- Neogit (modern magit-like Git client) + Diffview integration
+local function ensure_neogit()
+  if not package.loaded['neogit'] then
+    add({
+      'https://github.com/nvim-lua/plenary.nvim',
+      'https://github.com/sindrets/diffview.nvim',
+      'https://github.com/NeogitOrg/neogit',
+    })
+    require('neogit').setup({
+      integrations = {
+        diffview = true,
+      },
+    })
+    require('diffview').setup()
   end
-end, { desc = 'Git diff current file vs revision' })
-vim.keymap.set('n', '<leader>gf', ':0Gclog<CR>', { desc = 'Git file history' })
-vim.keymap.set('n', '<leader>gq', ':diffoff!<CR>:close<CR>', { desc = 'Close diff window' })
+end
 
--- Browse
-vim.keymap.set('n', '<leader>gS', ':Gedit HEAD:%<CR>', { desc = 'Open HEAD version' })
+vim.keymap.set('n', '<leader>gg', function()
+  ensure_neogit()
+  require('neogit').open()
+end, { desc = 'Neogit' })
+
+vim.keymap.set('n', '<leader>gD', function()
+  ensure_neogit()
+  require('diffview').open({})
+end, { desc = 'Git diff vs index (Diffview)' })
+
+vim.keymap.set('n', '<leader>gf', function()
+  ensure_neogit()
+  require('diffview').file_history()
+end, { desc = 'Git file history (Diffview)' })
+
+vim.keymap.set('n', '<leader>gq', function()
+  ensure_neogit()
+  require('diffview').close()
+end, { desc = 'Close diffview' })
 
 -- ============================================================================
 -- Task Runner & Terminal
