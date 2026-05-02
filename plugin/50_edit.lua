@@ -247,7 +247,7 @@ end)
 later(function()
   add({ 'https://github.com/stevearc/quicker.nvim' })
   require('quicker').setup({
-    constrain_cursor = true,
+    constrain_cursor = false,
     keep_cursor = true,
     bbox = { top = 2, bottom = 2, left = 12, right = 12 },
     trim_lines = true,
