@@ -87,7 +87,7 @@ vim.opt.undofile = true
 
 -- Timing settings
 vim.opt.timeout = true
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 1000
 
 -- Completion menu: preselect first item so Enter accepts it
 vim.opt.completeopt = 'menu,menuone,noinsert'

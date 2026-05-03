@@ -18,25 +18,39 @@ local function copy_current_buffer_path_to_system_clipboard(expand_modifiers, la
   vim.notify(label .. ' copied to system clipboard: ' .. path, vim.log.levels.INFO)
 end
 
-vim.api.nvim_create_user_command('MyCopyCurrentBufferFileNameToSystemClipboard', function()
-  copy_current_buffer_path_to_system_clipboard(':t', 'Current buffer file name')
-end, { desc = 'Copy current buffer file name to system clipboard' })
+vim.api.nvim_create_user_command('MyCopyFilePath', function()
+  local MiniPick = require('mini.pick')
+  local items = {
+    { label = 'File name', expand = ':t', description = 'Current buffer file name' },
+    { label = 'Relative path', expand = ':.', description = 'Current buffer relative path' },
+    { label = 'Absolute path', expand = ':p', description = 'Current buffer absolute path' },
+    { label = 'Relative directory', expand = ':.:h', description = 'Current buffer relative directory path' },
+    { label = 'Absolute directory', expand = ':p:h', description = 'Current buffer absolute directory path' },
+  }
 
-vim.api.nvim_create_user_command('MyCopyCurrentBufferRelativePathToSystemClipboard', function()
-  copy_current_buffer_path_to_system_clipboard(':.', 'Current buffer relative path')
-end, { desc = 'Copy current buffer relative path to system clipboard' })
+  local source = {
+    items = vim.tbl_map(function(item)
+      return item.label
+    end, items),
+    name = 'Copy file path',
+  }
 
-vim.api.nvim_create_user_command('MyCopyCurrentBufferAbsolutePathToSystemClipboard', function()
-  copy_current_buffer_path_to_system_clipboard(':p', 'Current buffer absolute path')
-end, { desc = 'Copy current buffer absolute path to system clipboard' })
+  -- Use vim.schedule to avoid issues when called from within another picker
+  -- (e.g., from MiniExtra.pickers.history). This ensures the parent picker
+  -- is fully closed before starting a new one.
+  vim.schedule(function()
+    local chosen = MiniPick.start({ source = source })
 
-vim.api.nvim_create_user_command('MyCopyCurrentBufferRelativeDirectoryPathToSystemClipboard', function()
-  copy_current_buffer_path_to_system_clipboard(':.:h', 'Current buffer relative directory path')
-end, { desc = 'Copy current buffer relative directory path to system clipboard' })
-
-vim.api.nvim_create_user_command('MyCopyCurrentBufferAbsoluteDirectoryPathToSystemClipboard', function()
-  copy_current_buffer_path_to_system_clipboard(':p:h', 'Current buffer absolute directory path')
-end, { desc = 'Copy current buffer absolute directory path to system clipboard' })
+    if chosen then
+      local selected = vim.tbl_filter(function(item)
+        return item.label == chosen
+      end, items)[1]
+      if selected then
+        copy_current_buffer_path_to_system_clipboard(selected.expand, selected.description)
+      end
+    end
+  end)
+end, { desc = 'Copy current buffer file path to system clipboard (with type selection)' })
 
 -- ============================================================================
 -- System file manager
