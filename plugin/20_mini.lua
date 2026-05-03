@@ -653,7 +653,6 @@ later(function()
   require('mini.git').setup()
 
   -- Inspect / blame (unique to mini.git, no conflict with neogit)
-  vim.keymap.set('n', '<leader>gb', '<cmd>lua MiniGit.show_at_cursor()<cr>', { desc = 'Git blame at cursor' })
   vim.keymap.set('n', '<leader>gB', '<cmd>lua MiniGit.show_range_history()<cr>', { desc = 'Git blame range' })
   vim.keymap.set('n', '<leader>gS', '<cmd>lua MiniGit.show_diff_source()<cr>', { desc = 'Git show diff source' })
 end)

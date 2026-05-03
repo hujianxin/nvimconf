@@ -134,6 +134,11 @@ vim.keymap.set('n', '<leader>gg', function()
   require('neogit').open()
 end, { desc = 'Neogit' })
 
+vim.keymap.set('n', '<leader>gb', function()
+  ensure_neogit()
+  vim.cmd('BlameToggle')
+end, { desc = 'BlameToggle' })
+
 vim.keymap.set('n', '<leader>gD', function()
   ensure_neogit()
   require('diffview').open({})
