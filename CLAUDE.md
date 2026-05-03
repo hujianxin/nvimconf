@@ -52,18 +52,7 @@ Prefer table items with a `text` field for display plus explicit data fields for
 
 Reason: `mini.pick` default `choose` may treat string items as files, buffers, or URI-like paths and open them before the caller handles the returned value. This can leave stray buffers such as `branch: main`.
 
-If a command using `MiniPick.start()` can be triggered from inside another `mini.pick` picker, start the new picker inside `vim.schedule()`:
-
-```lua
-vim.schedule(function()
-  local chosen = MiniPick.start({ source = source })
-  if chosen then
-    -- Handle selected item here.
-  end
-end)
-```
-
-Reason: `mini.pick` is not designed for nested picker startup while the outer picker's choose flow is still unwinding. Scheduling lets the outer picker fully close before the new picker starts. For repeated use, prefer the shared helper:
+Always use the shared helper to start custom pickers — it handles `vim.schedule()` automatically to avoid issues when called from inside another picker:
 
 ```lua
 Config.pick_later({ source = source }, function(chosen)
