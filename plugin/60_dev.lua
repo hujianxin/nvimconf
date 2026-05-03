@@ -124,6 +124,55 @@ vim.keymap.set(
   { desc = 'Diff file vs revision (input)' }
 )
 
+-- mini.git blame buffer: jump to diffview for the commit under cursor
+Config.new_autocmd('BufReadPost', 'minigit://*', function()
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  local function get_commit_hash_from_blame_line()
+    local line = vim.api.nvim_get_current_line()
+    local hash = line:match('^(%x+)')
+    if not hash then
+      vim.notify('No commit hash found on current line', vim.log.levels.WARN)
+      return nil
+    end
+    return hash
+  end
+
+  local function get_original_file_path_from_blame_buffer()
+    local bufname = vim.api.nvim_buf_get_name(bufnr)
+    local file = bufname:match('minigit://%d+/git blame %-%- (.+)$')
+    if not file then
+      vim.notify('Could not determine original file path from blame buffer', vim.log.levels.WARN)
+      return nil
+    end
+    return file
+  end
+
+  -- Diff this file at this commit (single file view)
+  vim.keymap.set('n', 'dv', function()
+    local hash = get_commit_hash_from_blame_line()
+    if not hash then
+      return
+    end
+    local file = get_original_file_path_from_blame_buffer()
+    if not file then
+      return
+    end
+    ensure_neogit()
+    require('diffview').open({ hash, '--', file })
+  end, { buffer = bufnr, desc = 'Diffview: this file at this commit' })
+
+  -- Diff the entire commit (all files changed in this commit)
+  vim.keymap.set('n', 'dV', function()
+    local hash = get_commit_hash_from_blame_line()
+    if not hash then
+      return
+    end
+    ensure_neogit()
+    require('diffview').open({ hash .. '^..' .. hash })
+  end, { buffer = bufnr, desc = 'Diffview: all files in this commit' })
+end, 'mini.git blame diffview shortcuts')
+
 -- ============================================================================
 -- Task Runner & Terminal
 -- ============================================================================
