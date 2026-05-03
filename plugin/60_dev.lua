@@ -7,6 +7,7 @@
 local add = vim.pack.add
 local later = Config.later
 local on_filetype = Config.on_filetype
+local pick_later = Config.pick_later
 
 -- ============================================================================
 -- Git
@@ -155,7 +156,7 @@ vim.keymap.set('n', '<leader>gq', function()
 end, { desc = 'Close diffview' })
 
 -- Diff current file against a chosen revision (via mini.pick)
-vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstChosenGitRevision', function()
+vim.api.nvim_create_user_command('DiffviewOpenAgainstRevision', function()
   ensure_neogit()
   local file = vim.fn.expand('%')
   if file == '' then
@@ -167,28 +168,28 @@ vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstChosenGitR
     vim.notify('No history for this file', vim.log.levels.WARN)
     return
   end
-  local MiniPick = require('mini.pick')
-  local chosen = MiniPick.start({
-    source = {
-      items = commits,
-      name = 'Git history: ' .. vim.fn.fnamemodify(file, ':t'),
-    },
-  })
-  if chosen then
-    local rev = chosen:match('^%S+')
-    require('diffview').open({ rev, '--', file })
+  local items = {}
+  for _, commit in ipairs(commits) do
+    local rev = commit:match('^%S+')
+    if rev then
+      table.insert(items, { text = commit, rev = rev })
+    end
   end
-end, { desc = 'Diff current buffer file against a chosen git revision (via mini.pick)' })
+  pick_later({
+    source = {
+      items = items,
+      name = 'Git history: ' .. vim.fn.fnamemodify(file, ':t'),
+      choose = function() end,
+    },
+  }, function(chosen)
+    require('diffview').open({ chosen.rev, '--', file })
+  end)
+end, { desc = 'Diff current buffer against a chosen git revision (via mini.pick)' })
 
-vim.keymap.set(
-  'n',
-  '<leader>go',
-  ':DiffviewOpenCurrentBufferFileAgainstChosenGitRevision<CR>',
-  { desc = 'Diff file vs revision (pick)' }
-)
+vim.keymap.set('n', '<leader>go', ':DiffviewOpenAgainstRevision<CR>', { desc = 'Diff file vs revision (pick)' })
 
 -- Diff current file against a specific revision (typed input)
-vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision', function(opts)
+vim.api.nvim_create_user_command('DiffviewOpenAgainstSpecifiedRevision', function(opts)
   ensure_neogit()
   local file = vim.fn.expand('%')
   if file == '' then
@@ -205,14 +206,56 @@ vim.api.nvim_create_user_command('DiffviewOpenCurrentBufferFileAgainstSpecifiedG
   else
     require('diffview').open({ rev, '--', file })
   end
-end, { nargs = '?', desc = 'Diff current buffer file against a specified git revision' })
+end, { nargs = '?', desc = 'Diff current buffer against a specified git revision' })
 
 vim.keymap.set(
   'n',
   '<leader>gO',
-  ':DiffviewOpenCurrentBufferFileAgainstSpecifiedGitRevision<CR>',
+  ':DiffviewOpenAgainstSpecifiedRevision<CR>',
   { desc = 'Diff file vs revision (input)' }
 )
+
+-- Diff current file against a chosen branch or tag (via mini.pick)
+vim.api.nvim_create_user_command('DiffviewOpenAgainstBranchOrTag', function()
+  ensure_neogit()
+  local file = vim.fn.expand('%')
+  if file == '' then
+    vim.notify('No file in current buffer', vim.log.levels.WARN)
+    return
+  end
+  local ok_branches, branches = pcall(vim.fn.systemlist, { 'git', 'branch', '-a', '--format=%(refname:short)' })
+  local ok_tags, tags = pcall(vim.fn.systemlist, { 'git', 'tag', '--list' })
+  local items = {}
+  if ok_branches then
+    for _, b in ipairs(branches) do
+      if b ~= '' then
+        table.insert(items, { text = 'branch: ' .. b, rev = b })
+      end
+    end
+  end
+  if ok_tags then
+    for _, t in ipairs(tags) do
+      if t ~= '' then
+        table.insert(items, { text = 'tag: ' .. t, rev = t })
+      end
+    end
+  end
+  if #items == 0 then
+    vim.notify('No branches or tags found', vim.log.levels.WARN)
+    return
+  end
+  pick_later({
+    source = {
+      items = items,
+      name = 'Branches/Tags: ' .. vim.fn.fnamemodify(file, ':t'),
+      choose = function() end,
+    },
+  }, function(chosen)
+    require('diffview').open({ chosen.rev, '--', file })
+  end)
+end, { desc = 'Diff current buffer against a chosen branch or tag (via mini.pick)' })
+
+vim.keymap.set('n', '<leader>gt', ':DiffviewOpenAgainstBranchOrTag<CR>', { desc = 'Diff file vs branch/tag (pick)' })
 
 -- ============================================================================
 -- Task Runner & Terminal

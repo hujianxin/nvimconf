@@ -4,6 +4,8 @@
 -- General-purpose custom commands that do not fit into other categories.
 -- ============================================================================
 
+local pick_later = Config.pick_later
+
 -- ============================================================================
 -- Clipboard helpers
 -- ============================================================================
@@ -19,36 +21,22 @@ local function copy_current_buffer_path_to_system_clipboard(expand_modifiers, la
 end
 
 vim.api.nvim_create_user_command('MyCopyFilePath', function()
-  local MiniPick = require('mini.pick')
   local items = {
-    { label = 'File name', expand = ':t', description = 'Current buffer file name' },
-    { label = 'Relative path', expand = ':.', description = 'Current buffer relative path' },
-    { label = 'Absolute path', expand = ':p', description = 'Current buffer absolute path' },
-    { label = 'Relative directory', expand = ':.:h', description = 'Current buffer relative directory path' },
-    { label = 'Absolute directory', expand = ':p:h', description = 'Current buffer absolute directory path' },
+    { text = 'File name', expand = ':t', description = 'Current buffer file name' },
+    { text = 'Relative path', expand = ':.', description = 'Current buffer relative path' },
+    { text = 'Absolute path', expand = ':p', description = 'Current buffer absolute path' },
+    { text = 'Relative directory', expand = ':.:h', description = 'Current buffer relative directory path' },
+    { text = 'Absolute directory', expand = ':p:h', description = 'Current buffer absolute directory path' },
   }
 
   local source = {
-    items = vim.tbl_map(function(item)
-      return item.label
-    end, items),
+    items = items,
     name = 'Copy file path',
+    choose = function() end,
   }
 
-  -- Use vim.schedule to avoid issues when called from within another picker
-  -- (e.g., from MiniExtra.pickers.history). This ensures the parent picker
-  -- is fully closed before starting a new one.
-  vim.schedule(function()
-    local chosen = MiniPick.start({ source = source })
-
-    if chosen then
-      local selected = vim.tbl_filter(function(item)
-        return item.label == chosen
-      end, items)[1]
-      if selected then
-        copy_current_buffer_path_to_system_clipboard(selected.expand, selected.description)
-      end
-    end
+  pick_later({ source = source }, function(chosen)
+    copy_current_buffer_path_to_system_clipboard(chosen.expand, chosen.description)
   end)
 end, { desc = 'Copy current buffer file path to system clipboard (with type selection)' })
 

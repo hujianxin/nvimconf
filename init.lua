@@ -79,6 +79,15 @@ Config.on_filetype = function(ft, f)
   misc.safely('filetype:' .. ft_name, f)
 end
 
+Config.pick_later = function(opts, on_choose)
+  vim.schedule(function()
+    local chosen = require('mini.pick').start(opts)
+    if chosen and on_choose then
+      on_choose(chosen)
+    end
+  end)
+end
+
 -- ============================================================================
 -- Helper for creating autocommands
 -- ============================================================================
