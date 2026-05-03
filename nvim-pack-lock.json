@@ -4,6 +4,10 @@
       "rev": "9aabcb8396224dcbf8d51c0c1d620d88a46e89d7",
       "src": "https://github.com/okuuva/auto-save.nvim"
     },
+    "blame.nvim": {
+      "rev": "39bb4b410e149199c91c6aa2241f97f19f7ec29d",
+      "src": "https://github.com/FabijanZulj/blame.nvim"
+    },
     "conform.nvim": {
       "rev": "dca1a190aa85f9065979ef35802fb77131911106",
       "src": "https://github.com/stevearc/conform.nvim"
