@@ -17,7 +17,7 @@
 -- │   ├── 20_mini.lua             Mini.nvim configuration (all mini plugins)
 -- │   ├── 30_treesitter.lua       Treesitter, UFO folding, guess-indent
 -- │   ├── 40_lsp.lua              LSP, Completion, and Diagnostics (trouble)
--- │   ├── 50_edit.lua             Editing tools (formatting, multicursor, flash, grug-far, auto-save, undotree, quicker)
+-- │   ├── 50_edit.lua             Editing tools (formatting, multicursor, grug-far, auto-save, undotree, quicker)
 -- │   ├── 60_dev.lua              Dev tools (git, runner, terminal, test, dap, kulala)
 -- │   └── 99_gui.lua              GUI settings (Neovide, etc.)
 -- ├── after/                      Files to override behavior added by plugins
