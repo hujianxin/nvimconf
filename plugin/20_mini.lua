@@ -65,6 +65,7 @@ now(function()
   })
   vim.notify = MiniNotify.make_notify()
   vim.keymap.set('n', '<leader>Tn', '<cmd>lua MiniNotify.show_history()<cr>', { desc = 'Show notification history' })
+  vim.keymap.set('n', '<leader>Td', '<cmd>lua MiniNotify.clear()<cr>', { desc = 'Clear notifications' })
 end)
 
 -- mini.sessions - Session management
