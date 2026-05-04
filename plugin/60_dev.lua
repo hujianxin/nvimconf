@@ -140,7 +140,7 @@ vim.keymap.set('n', '<leader>gb', function()
   vim.cmd('BlameToggle')
 end, { desc = 'BlameToggle' })
 
-vim.keymap.set('n', '<leader>gD', function()
+vim.keymap.set('n', '<leader>gd', function()
   ensure_neogit()
   require('diffview').open({})
 end, { desc = 'Git diff vs index' })
