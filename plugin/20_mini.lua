@@ -773,19 +773,7 @@ end)
 
 -- mini.surround - Surround operations
 later(function()
-  require('mini.surround').setup({
-    mappings = {
-      add = 'ms',
-      delete = 'md',
-      find = 'mf',
-      find_left = 'mF',
-      highlight = 'mh',
-      replace = 'mr',
-      suffix_last = 'l',
-      suffix_next = 'n',
-    },
-    respect_selection_type = true,
-  })
+  require('mini.surround').setup({})
 end)
 
 -- mini.trailspace - Trailing whitespace handling
