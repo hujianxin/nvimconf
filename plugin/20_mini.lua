@@ -310,6 +310,13 @@ later(function()
       'Command history',
     },
     {
+      '<leader>:',
+      function()
+        MiniExtra.pickers.commands()
+      end,
+      'Commands',
+    },
+    {
       "<leader>'",
       function()
         MiniPick.builtin.resume()
