@@ -138,27 +138,10 @@ end)
 -- ============================================================================
 -- Grug-far - Search and replace
 -- ============================================================================
-
-local function grugfar(fn, ...)
-  if not package.loaded['grug-far'] then
-    add({ 'https://github.com/MagicDuck/grug-far.nvim' })
-    require('grug-far').setup({ windowCreationCommand = 'vsplit' })
-  end
-  require('grug-far')[fn](...)
-end
-
-vim.keymap.set('n', '<M-S-s>', function()
-  grugfar('open')
-end, { desc = 'Replace in files' })
-vim.keymap.set('n', '<M-S-w>', function()
-  grugfar('open', { prefills = { search = vim.fn.expand('<cword>') } })
-end, { desc = 'Replace current word' })
-vim.keymap.set('v', '<M-S-w>', function()
-  grugfar('with_visual_selection')
-end, { desc = 'Replace selection' })
-vim.keymap.set('n', '<M-S-f>', function()
-  grugfar('open', { prefills = { paths = vim.fn.expand('%') } })
-end, { desc = 'Replace in current file' })
+later(function()
+  add({ 'https://github.com/MagicDuck/grug-far.nvim' })
+  require('grug-far').setup({ windowCreationCommand = 'vsplit' })
+end)
 
 -- ============================================================================
 -- Quicker.nvim - Enhanced quickfix list
@@ -167,7 +150,7 @@ end, { desc = 'Replace in current file' })
 later(function()
   add({ 'https://github.com/stevearc/quicker.nvim' })
   require('quicker').setup({
-    constrain_cursor = false,
+    constrain_cursor = true,
     keep_cursor = true,
     bbox = { top = 2, bottom = 2, left = 12, right = 12 },
     trim_lines = true,
